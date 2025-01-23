@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="500.0" prefWidth="900.0" style="-fx-background-color: #2C2F33;">
+    <!-- Conteneur principal -->
+    <HBox alignment="CENTER" spacing="20" style="-fx-padding: 30;">
+        <!-- Section gauche (formulaire) -->
+        <VBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 30; -fx-pref-width: 600; -fx-max-width: 600;">
+            <!-- Titre principal -->
+            <Label text="Ha, te revoilà !" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+            <Label text="Nous sommes si heureux de te revoir !" style="-fx-font-size: 14px; -fx-text-fill: #B9BBBE;"/>
+
+            <!-- Formulaire de connexion -->
+            <VBox alignment="CENTER_LEFT" spacing="10" style="-fx-pref-width: 100%;">
+                <!-- Champ E-mail ou téléphone -->
+                <Label text="E-MAIL OU NUMÉRO DE TÉLÉPHONE *" style="-fx-font-size: 12px; -fx-text-fill: #B9BBBE;"/>
+                <TextField promptText="" style="-fx-background-color: #40444B; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10; -fx-pref-width: 400;"/>
+
+                <!-- Champ Mot de passe -->
+                <Label text="MOT DE PASSE *" style="-fx-font-size: 12px; -fx-text-fill: #B9BBBE;"/>
+                <PasswordField promptText="" style="-fx-background-color: #40444B; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10; -fx-pref-width: 400;"/>
+
+                <!-- Lien pour mot de passe oublié -->
+                <Hyperlink text="Tu as oublié ton mot de passe ?" style="-fx-font-size: 12px; -fx-text-fill: #3B82F6;"/>
+            </VBox>
+
+            <!-- Bouton de connexion -->
+            <Button text="Connexion" style="-fx-background-color: #5865F2; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10; -fx-pref-width: 200; -fx-background-radius: 5;"/>
+
+            <!-- Lien pour s'inscrire -->
+            <Hyperlink text="Besoin d'un compte ? S’inscrire" style="-fx-font-size: 12px; -fx-text-fill: #3B82F6;"/>
+        </VBox>
+
+        <!-- Section droite (QR code) -->
+        <VBox alignment="CENTER" spacing="20" style="-fx-padding: 20; -fx-pref-width: 300; -fx-max-width: 300;">
+            <Label text="Se connecter avec un code QR" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+            <Label text="Scanne-le avec l'application mobile Discord pour te connecter instantanément."
+                   style="-fx-font-size: 12px; -fx-text-fill: #B9BBBE; -fx-wrap-text: true; -fx-max-width: 200;"/>
+            <ImageView fitHeight="150" fitWidth="150">
+                <Image url="file:/C:/Users/Quent/Documents/discordlike_client/src/main/resources/Image/qrcode.png"/>
+            </ImageView>
+        </VBox>
+    </HBox>
+</AnchorPane>
