@@ -5,6 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="06a46db0-871b-4c48-8e5d-d01525498b03" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/discordlike_client/controller/HelloController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/discordlike_client/controller/HelloController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/discordlike_client/controller/Inscription.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/discordlike_client/controller/Inscription.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/com/example/discordlike_client/hello-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/example/discordlike_client/hello-view.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/com/example/discordlike_client/inscription.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/example/discordlike_client/inscription.fxml" afterDir="false" />
@@ -17,21 +19,28 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "QuentinPOL"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;QuentinPOL&quot;
   }
-}]]></component>
+}</component>
   <component name="GithubPullRequestsUISettings"><![CDATA[{
   "selectedUrlAndAccountId": {
     "url": "https://github.com/QuentinPOL/DiscordClient",
-    "accountId": "f14171d7-0ba2-4c3a-a19b-04168fdfaadf"
+    "accountId": "13e698a5-7aaf-414d-bb84-0c9f6fe2a0d3"
   }
 }]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 6
-}]]></component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
   <component name="ProjectId" id="2sJO7LGTgz4cBJUihnkBprWXqqe" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -45,7 +54,7 @@
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Quent/Documents/UniLaSallee/I3-FISA-RIOC/POO Java/TP TD PROJETS/DiscordClient",
+    "last_opened_file_path": "C:/Users/Quent/Documents/DiscordClient",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -71,6 +80,7 @@
       <option name="presentableId" value="Default" />
       <updated>1738170042524</updated>
       <workItem from="1738170043637" duration="5916000" />
+      <workItem from="1738224092325" duration="3456000" />
     </task>
     <servers />
   </component>

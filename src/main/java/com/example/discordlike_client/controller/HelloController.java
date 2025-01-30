@@ -77,6 +77,11 @@ public class HelloController {
         }
     }
 
+    @FXML
+    protected void onGuestLoginClick(ActionEvent event) {
+        showAlert("Mode Invité", "Vous êtes connecté en tant qu'invité.");
+    }
+
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);

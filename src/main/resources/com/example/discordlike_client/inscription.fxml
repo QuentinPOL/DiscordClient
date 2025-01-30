@@ -9,6 +9,7 @@
         <TextField fx:id="usernameField" promptText="Nom d'utilisateur" style="-fx-background-color: #40444B; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10; -fx-pref-width: 400;"/>
         <TextField fx:id="emailField" promptText="E-mail" style="-fx-background-color: #40444B; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10; -fx-pref-width: 400;"/>
         <PasswordField fx:id="passwordField" promptText="Mot de passe" style="-fx-background-color: #40444B; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10; -fx-pref-width: 400;"/>
+        <PasswordField fx:id="passwordFieldConfirm" promptText="Confirmation MDP" style="-fx-background-color: #40444B; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10; -fx-pref-width: 400;"/>
 
         <Button fx:id="signUpButton" text="S'inscrire" onAction="#onSignUpButtonClick" style="-fx-background-color: #5865F2; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10; -fx-pref-width: 200; -fx-background-radius: 5;"/>
 
