@@ -15,7 +15,7 @@
             <!-- Formulaire de connexion -->
             <VBox alignment="CENTER_LEFT" spacing="10" style="-fx-pref-width: 100%;">
                 <!-- Champ E-mail ou téléphone -->
-                <Label text="E-MAIL OU NUMÉRO DE TÉLÉPHONE *" style="-fx-font-size: 12px; -fx-text-fill: #B9BBBE;"/>
+                <Label text="E-MAIL OU NOM D'UTILISATEUR *" style="-fx-font-size: 12px; -fx-text-fill: #B9BBBE;"/>
                 <TextField fx:id="emailOrPhoneField" promptText="" style="-fx-background-color: #40444B; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10; -fx-pref-width: 400;"/>
 
                 <!-- Champ Mot de passe -->
@@ -23,7 +23,7 @@
                 <PasswordField fx:id="passwordField" promptText="" style="-fx-background-color: #40444B; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10; -fx-pref-width: 400;"/>
 
                 <!-- Lien pour mot de passe oublié -->
-                <Hyperlink fx:id="forgotPasswordLink" text="Tu as oublié ton mot de passe ?" onAction="#onForgotPasswordClick" style="-fx-font-size: 12px; -fx-text-fill: #3B82F6;"/>
+                <Hyperlink fx:id="forgotPasswordLink" text="Tu as oublié ton mot de passe ?" style="-fx-font-size: 12px; -fx-text-fill: #3B82F6;"/>
             </VBox>
 
             <!-- Bouton de connexion -->
@@ -39,7 +39,7 @@
             <Label text="Scanne-le avec l'application mobile Discord pour te connecter instantanément."
                    style="-fx-font-size: 12px; -fx-text-fill: #B9BBBE; -fx-wrap-text: true; -fx-max-width: 200;"/>
             <ImageView fitHeight="150" fitWidth="150">
-                <Image url="file:/C:/Users/Quent/IdeaProjects/DiscordClient/src/main/resources/Image/qrcode.png"/>
+                <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\qrcode.png"/>
             </ImageView>
         </VBox>
     </HBox>
