@@ -18,9 +18,9 @@ public class HelloApplication extends Application {
         Scene scene = new Scene(root);
 
         // Configurer la fenêtre
-        primaryStage.setTitle("Connexion");
+        primaryStage.setTitle("Discord Client");
         primaryStage.setScene(scene);
-        primaryStage.setResizable(false); // Rendre la fenêtre non redimensionnable
+        primaryStage.setResizable(false); // Permet d'agrandir et réduire la fenêtre
         primaryStage.show();
     }
 

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.layout.StackPane?>
+<HBox fx:id="rootPane"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.discordlike_client.controller.MainViewController"
+      style="-fx-background-color: #36393F;">
+
+    <!-- 1) Barre de serveurs : devient une ListView -->
+    <VBox spacing="8"
+          style="-fx-background-color: #202225; -fx-pref-width: 68;">
+
+        <!-- LISTE DES SERVEURS (icônes rondes) -->
+        <ListView fx:id="serversListView"
+                  VBox.vgrow="ALWAYS"
+                  style="
+          -fx-background-color: #202225;
+          -fx-control-inner-background: #202225;
+          -fx-focus-color: transparent;      /* Pas de surbrillance au focus */
+          -fx-faint-focus-color: transparent;
+          -fx-padding: 0;                    /* Supprime marges internes */
+          -fx-cell-size: 100;                /* Hauteur de chaque item (doit être un peu plus grand que l'image) */
+          -fx-border-width: 0;               /* Pas de bordure */
+          -fx-border-color: transparent;"
+                  maxWidth="80" minWidth="80" prefWidth="80" />
+
+        <!-- Bouton déconnexion -->
+        <Button fx:id="buttonLogout"
+                text="⏻"
+                style="
+            -fx-font-size: 20px;
+            -fx-background-color: transparent;
+            -fx-text-fill: red;
+            -fx-cursor: hand;
+            -fx-padding: 30;"
+                onAction="#handleLogoutClick"/>
+
+    </VBox>
+
+    <!-- 2) Colonne "Amis/Nitro/Boutique..." + MESSAGES PRIVÉS + barre user en bas -->
+    <VBox spacing="0"
+          style="-fx-background-color: #2F3136; -fx-pref-width: 220;">
+
+        <!-- Partie haute : labels "Amis/Bibliothèque/..." + "MESSAGES PRIVÉS" -->
+        <VBox spacing="10"
+              style="-fx-background-color: #2F3136; -fx-pref-width: 220; -fx-padding: 10;">
+
+            <!-- Amis -->
+            <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: #40444B; -fx-padding: 8; -fx-background-radius: 5;">
+                <ImageView fitWidth="28" fitHeight="28">
+                    <image>
+                        <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\friends.png"/>
+                    </image>
+                </ImageView>
+                <Label text="Amis" style="-fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;"/>
+            </HBox>
+
+            <!-- Bibliothèque -->
+            <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 8;">
+                <ImageView fitWidth="28" fitHeight="28">
+                    <image>
+                        <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\library.png"/>
+                    </image>
+                </ImageView>
+                <Label text="Bibliothèque" style="-fx-text-fill: #B9BBBE; -fx-font-size: 14px; -fx-font-weight: bold;"/>
+            </HBox>
+
+            <!-- Nitro -->
+            <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 8;">
+                <ImageView fitWidth="28" fitHeight="28">
+                    <image>
+                        <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\nitro.png"/>
+                    </image>
+                </ImageView>
+                <Label text="Nitro" style="-fx-text-fill: #B9BBBE; -fx-font-size: 14px; -fx-font-weight: bold;"/>
+            </HBox>
+
+            <!-- Boutique -->
+            <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 8;">
+                <ImageView fitWidth="28" fitHeight="28">
+                    <image>
+                        <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\shop.png"/>
+                    </image>
+                </ImageView>
+                <Label text="Boutique" style="-fx-text-fill: #B9BBBE; -fx-font-size: 14px; -fx-font-weight: bold;"/>
+            </HBox>
+
+            <!-- Messages privés -->
+            <Label text="MESSAGES PRIVÉS"
+                   style="-fx-text-fill: #8E9297; -fx-font-size: 12px; -fx-padding: 15 0 0 0; -fx-font-weight: bold;"/>
+        </VBox>
+
+        <!-- La ListView occupe tout l'espace disponible -->
+        <ListView fx:id="privateMessagesList"
+                  VBox.vgrow="ALWAYS"
+                  style="
+                -fx-background-color: #2F3136;
+                -fx-control-inner-background: #2F3136;
+                -fx-text-fill: white;
+              "/>
+
+        <!-- Barre utilisateur collée en bas -->
+        <HBox spacing="8" alignment="CENTER_LEFT"
+              style="-fx-background-color: #292B2F; -fx-padding: 8;">
+
+            <!-- Avatar circulaire + statut -->
+            <StackPane>
+                <ImageView fx:id="userAvatar" fitWidth="40" fitHeight="40"/>
+
+                <!-- Pastille de statut en bas à droite -->
+                <Circle fx:id="statusIndicator" radius="6" fill="#43B581"
+                        translateX="14" translateY="14"
+                        stroke="black" strokeWidth="2"/>
+            </StackPane>
+
+            <!-- Infos utilisateur -->
+            <VBox>
+                <Label fx:id="usernameLabel" text="DJquinquin"
+                       style="-fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+                <Label fx:id="statusText" text="En ligne" style="-fx-text-fill: white; -fx-font-size: 11px;"/>
+            </VBox>
+
+            <Pane HBox.hgrow="ALWAYS"/>
+
+            <!-- Icônes (Mute, Casque, Paramètres) -->
+            <HBox spacing="8" alignment="CENTER">
+                <ImageView fitWidth="17" fitHeight="17">
+                    <image>
+                        <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\microphone.png"/>
+                    </image>
+                </ImageView>
+                <ImageView fitWidth="17" fitHeight="17">
+                    <image>
+                        <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\headset.png"/>
+                    </image>
+                </ImageView>
+                <ImageView fitWidth="17" fitHeight="17">
+                    <image>
+                        <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\settings.png"/>
+                    </image>
+                </ImageView>
+            </HBox>
+        </HBox>
+    </VBox>
+
+    <!-- 3) Colonne principale -->
+    <VBox HBox.hgrow="ALWAYS"
+          style="-fx-background-color: #36393F;">
+        <VBox style="-fx-background-color: #2F3136; -fx-padding: 10;">
+            <TextField fx:id="searchField"
+                       promptText="Rechercher/lancer une conversation..."
+                       style="-fx-background-color: #202225; -fx-text-fill: white; -fx-prompt-text-fill: #72767D; -fx-pref-width: 100%;"/>
+            <Pane style="-fx-min-height: 8;" />
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button text="Amis" style="-fx-background-color: transparent; -fx-text-fill: white;"/>
+                <Button text="En ligne" style="-fx-background-color: #5865F2; -fx-text-fill: white;"/>
+                <Button text="Tous" style="-fx-background-color: transparent; -fx-text-fill: white;"/>
+                <Button text="En attente" style="-fx-background-color: transparent; -fx-text-fill: white;"/>
+                <Button text="Bloqué" style="-fx-background-color: transparent; -fx-text-fill: white;"/>
+                <Button text="Ajouter" style="-fx-background-color: #3BA55D; -fx-text-fill: white;"/>
+            </HBox>
+        </VBox>
+
+        <VBox spacing="5" style="-fx-padding: 10;">
+            <Label text="EN LIGNE — 5" style="-fx-text-fill: #8E9297; -fx-font-size: 12px;"/>
+            <ListView fx:id="friendsList"
+                      style="-fx-background-color: #2F3136; -fx-text-fill: white;"
+                      VBox.vgrow="ALWAYS" />
+        </VBox>
+    </VBox>
+
+    <!-- 4) Colonne de droite -->
+    <VBox spacing="10"
+          style="-fx-background-color: #2F3136; -fx-pref-width: 280; -fx-padding: 10;">
+        <Label text="En ligne" style="-fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;"/>
+        <Label text="Tout est calme... pour le moment." style="-fx-text-fill: #8E9297; -fx-font-size: 14px;"/>
+        <Label text="Quand un ami commencera une activité, comme jouer à un jeu ou passer du temps sur le chat vocal, ce sera affiché ici !"
+               wrapText="true"
+               style="-fx-text-fill: #8E9297; -fx-font-size: 12px;"/>
+    </VBox>
+
+</HBox>

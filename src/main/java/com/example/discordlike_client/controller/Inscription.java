@@ -1,5 +1,6 @@
 package com.example.discordlike_client.controller;
 
+import com.example.discordlike_client.model.Utilisateur;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -8,8 +9,11 @@ import javafx.stage.Stage;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.regex.Pattern;
-import javafx.application.Platform; // Import nécessaire pour Platform.runLater()
+import javafx.application.Platform;
 import okhttp3.*;
 
 import java.io.IOException;
@@ -48,6 +52,11 @@ public class Inscription {
             return;
         }
 
+        if (username.length() > 10) {
+            showAlert("Erreur", "Le pseudo ne peut pas dépasser 10 caractères.");
+            return;
+        }
+
         if (!Pattern.matches(EMAIL_REGEX, email)) {
             showAlert("Erreur", "Veuillez entrer une adresse e-mail valide.");
             return;
@@ -63,15 +72,18 @@ public class Inscription {
             return;
         }
 
+        // Hachage du mot de passe avec SHA-256
+        String hashedPassword = hashPassword(password);
+
         // Envoyer la requête HTTP d'inscription
-        sendSignUpRequest(username, email, password);
+        sendSignUpRequest(username, email, hashedPassword);
     }
 
     private void sendSignUpRequest(String username, String email, String password) {
         // Construction du JSON
         String json = "{"
                 + "\"email\":\"" + email + "\","
-                + "\"passwordHash\":\"" + password + "\","
+                + "\"password\":\"" + password + "\","
                 + "\"username\":\"" + username + "\""
                 + "}";
 
@@ -97,12 +109,43 @@ public class Inscription {
                 System.out.println(response.body().string());
 
                 if (response.isSuccessful()) {
-                    Platform.runLater(() -> showAlert("Succès", "Inscription réussie !"));
-                } else {
+                    Platform.runLater(() -> {
+                        showAlert("Succès", "Inscription réussie !");
+
+                        // Stocker les infos de l'utilisateur
+                        Utilisateur utilisateur = Utilisateur.getInstance();
+                        utilisateur.setAdresseMail(email);
+                        utilisateur.setPseudo(username);
+                        //utilisateur.setToken(response.body().string());
+
+                        redirectToMainView();
+                    });
+                } else if (response.code() == 403) {
+                    Platform.runLater(() -> showAlert("Erreur", "Inscription échouée. Adresse-Mail/Pseudo déjà existant."));
+                }
+                else {
                     Platform.runLater(() -> showAlert("Erreur", "Inscription échouée. Vérifiez vos informations."));
                 }
             }
         });
+    }
+
+    // Méthode pour hacher un mot de passe avec SHA-256
+    private String hashPassword(String password) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @FXML
@@ -114,6 +157,18 @@ public class Inscription {
             stage.setScene(scene);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void redirectToMainView() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/discordlike_client/main-view.fxml"));
+            Scene scene = new Scene(fxmlLoader.load());
+
+            Stage stage = (Stage) usernameField.getScene().getWindow();
+            stage.setScene(scene);
+        } catch (IOException e) {
+            showAlert("Erreur", "Impossible d'accéder au tableau de bord.");
         }
     }
 
