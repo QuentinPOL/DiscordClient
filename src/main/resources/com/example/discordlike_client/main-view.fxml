@@ -156,28 +156,40 @@
     </VBox>
 
     <!-- 3) Colonne principale -->
-    <VBox HBox.hgrow="ALWAYS"
-          style="-fx-background-color: #36393F;">
+    <VBox HBox.hgrow="ALWAYS" style="-fx-background-color: #36393F;">
         <VBox style="-fx-background-color: #2F3136; -fx-padding: 10;">
             <TextField fx:id="searchField"
                        promptText="Rechercher/lancer une conversation..."
                        style="-fx-background-color: #202225; -fx-text-fill: white; -fx-prompt-text-fill: #72767D; -fx-pref-width: 100%;"/>
             <Pane style="-fx-min-height: 8;" />
+
+            <!-- Ligne regroupant les boutons de filtre et le formulaire d'ajout inline -->
             <HBox spacing="10" alignment="CENTER_LEFT">
                 <Button text="Amis" style="-fx-background-color: transparent; -fx-text-fill: white;"/>
-                <Button text="En ligne" style="-fx-background-color: #5865F2; -fx-text-fill: white;"/>
-                <Button text="Tous" style="-fx-background-color: transparent; -fx-text-fill: white;"/>
-                <Button text="En attente" style="-fx-background-color: transparent; -fx-text-fill: white;"/>
-                <Button text="Bloqué" style="-fx-background-color: transparent; -fx-text-fill: white;"/>
-                <Button text="Ajouter" style="-fx-background-color: #3BA55D; -fx-text-fill: white;"/>
+                <Button fx:id="btnOnline" text="En ligne" style="-fx-background-color: #5865F2; -fx-text-fill: white;" onAction="#handleOnlineFriends"/>
+                <Button fx:id="btnAll" text="Tous" style="-fx-background-color: transparent; -fx-text-fill: white;" onAction="#handleAllFriends"/>
+                <Button fx:id="btnPending" text="En attente" style="-fx-background-color: transparent; -fx-text-fill: white;" onAction="#handlePendingFriends"/>
+                <Button fx:id="btnBlocked" text="Bloqué" style="-fx-background-color: transparent; -fx-text-fill: white;" onAction="#handleBlockedFriends"/>
+                <Button fx:id="btnAdd" text="Ajouter" style="-fx-background-color: #3BA55D; -fx-text-fill: white;" onAction="#handleAddFriend"/>
+
+                <!-- Espaceur pour pousser le formulaire vers la droite -->
+                <Pane HBox.hgrow="ALWAYS"/>
+
+                <!-- Formulaire d'ajout inline, initialement caché -->
+                <HBox fx:id="addFriendContainer" visible="false" spacing="10" alignment="CENTER_LEFT">
+                    <!-- Champ de saisie agrandi via prefWidth (ici 250, ajustable) -->
+                    <TextField fx:id="friendNameField" promptText="Entrez le pseudo de l'ami"
+                               style="-fx-background-color: #202225; -fx-text-fill: white; -fx-prompt-text-fill: #72767D;"
+                               prefWidth="250"/>
+                    <Button text="Valider" onAction="#handleConfirmAddFriend" style="-fx-background-color: #3BA55D; -fx-text-fill: white;"/>
+                    <Button text="Annuler" onAction="#handleCancelAddFriend" style="-fx-background-color: #F04747; -fx-text-fill: white;"/>
+                </HBox>
             </HBox>
         </VBox>
 
         <VBox spacing="5" style="-fx-padding: 10;">
-            <Label text="EN LIGNE — 5" style="-fx-text-fill: #8E9297; -fx-font-size: 12px;"/>
-            <ListView fx:id="friendsList"
-                      style="-fx-background-color: #2F3136; -fx-text-fill: white;"
-                      VBox.vgrow="ALWAYS" />
+            <Label fx:id="friendsLabel" text="En Ligne" style="-fx-text-fill: #8E9297; -fx-font-size: 12px;"/>
+            <ListView fx:id="friendsList" VBox.vgrow="ALWAYS" />
         </VBox>
     </VBox>
 

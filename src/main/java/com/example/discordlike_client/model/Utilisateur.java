@@ -1,5 +1,7 @@
 package com.example.discordlike_client.model;
 
+import java.util.Objects;
+
 public class Utilisateur {
     private static Utilisateur instance; // Singleton
 
@@ -7,6 +9,7 @@ public class Utilisateur {
     private String pseudo;
     private String token;
     private Status statut;
+    private String imagePath;
 
     // Enum pour les statuts disponibles
     public enum Status {
@@ -61,7 +64,30 @@ public class Utilisateur {
         return statut;
     }
 
-    public void setStatut(Status statut) {
+    public void setStatutEnum(Status statut) {
         this.statut = statut;
+    }
+
+    public void setStatutString(String statut) {
+        if (Objects.equals(statut, "ONLINE")) {
+            this.statut = Status.ONLINE;
+        }
+        else if (Objects.equals(statut, "IDLE")) {
+            this.statut = Status.BUSY;
+        }
+        else if (Objects.equals(statut, "DO_NOT_DISTURB")) {
+            this.statut = Status.DND;
+        }
+        else if (Objects.equals(statut, "INVISIBLE")) {
+            this.statut = Status.INVISIBLE;
+        }
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 }

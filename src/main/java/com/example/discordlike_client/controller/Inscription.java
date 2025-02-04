@@ -6,6 +6,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.json.JSONException;
+import org.json.JSONObject;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -106,7 +108,7 @@ public class Inscription {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                System.out.println(response.body().string());
+                String responseBody = response.body().string();
 
                 if (response.isSuccessful()) {
                     Platform.runLater(() -> {
@@ -116,7 +118,19 @@ public class Inscription {
                         Utilisateur utilisateur = Utilisateur.getInstance();
                         utilisateur.setAdresseMail(email);
                         utilisateur.setPseudo(username);
-                        //utilisateur.setToken(response.body().string());
+
+                        // Extraire le token du JSON de la réponse
+                        try {
+                            JSONObject jsonResponse = new JSONObject(responseBody);
+                            String token = jsonResponse.getString("token");
+                            String avatar = jsonResponse.getString("avatar");
+
+                            utilisateur.setToken(token);
+                            utilisateur.setImagePath(avatar);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            showAlert("Erreur", "Impossible de récupérer le token.");
+                        }
 
                         redirectToMainView();
                     });

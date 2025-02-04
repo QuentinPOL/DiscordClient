@@ -16,6 +16,8 @@ import java.security.NoSuchAlgorithmException;
 import javafx.stage.Stage;
 
 import okhttp3.*;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -47,9 +49,10 @@ public class HelloController {
 
         // Construction du JSON
         String json = "{"
-                + "\"email\":\"" + emailUsername + "\","
+                + "\"usernameOrEmail\":\"" + emailUsername + "\","
                 + "\"password\":\"" + hashedPassword + "\""
                 + "}";
+
 
         // Création du corps de requête
         RequestBody body = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
@@ -70,7 +73,7 @@ public class HelloController {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                System.out.println(response.body().string());
+                String responseBody = response.body().string();
 
                 if (response.isSuccessful()) {
                     Platform.runLater(() -> {
@@ -82,7 +85,27 @@ public class HelloController {
                         // Récupérer le pseudo et l'adresse mail
                         utilisateur.setAdresseMail(emailUsername);
                         utilisateur.setPseudo(emailUsername);
-                        //utilisateur.setToken(response.body().toString());
+
+                        // Extraire le token du JSON de la réponse
+                        try {
+                            JSONObject jsonResponse = new JSONObject(responseBody);
+
+                            String email = jsonResponse.getString("email");
+                            String username = jsonResponse.getString("username");
+                            String token = jsonResponse.getString("token");
+                            String avatar = jsonResponse.getString("avatar");
+                            String status = jsonResponse.getString("status");
+
+                            utilisateur.setAdresseMail(email);
+                            utilisateur.setPseudo(username);
+                            utilisateur.setStatutString(status);
+                            utilisateur.setToken(token);
+                            utilisateur.setImagePath(avatar);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            showAlert("Erreur", "Impossible de récupérer le token.");
+                        }
+
 
                         redirectToMainView();
                     });
