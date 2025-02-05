@@ -10,12 +10,10 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.geometry.Pos;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -25,8 +23,6 @@ import javafx.scene.Scene;
 import okhttp3.*;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Optional;
 
 public class MainViewController {
 
@@ -69,6 +65,7 @@ public class MainViewController {
         String friendshipStatus;
         String friendOnlineStatus;
         String avatar;
+        String requestType;
     }
 
     // Pour gérer les errur
@@ -212,32 +209,17 @@ public class MainViewController {
                 if (empty || friend == null) {
                     setGraphic(null);
                 } else {
+                    // Tout le code qui utilise 'friend' doit être dans ce bloc
+                    container.getChildren().clear();
+
                     Image img = new Image(getClass().getResource(friend.getAvatarPath()).toExternalForm());
                     avatar.setImage(img);
                     pseudoLabel.setText(friend.getPseudo());
 
-                    // Si l'ami est en attente, on affiche "En attente" mais la couleur dépend du statut en ligne réel
-                    if(friend.getFriendshipStatus() == FriendStatus.PENDING) {
+                    // Configuration du statut (exemple)
+                    if (friend.getFriendshipStatus() == FriendStatus.PENDING) {
                         statusLabel.setText("En attente");
-                        switch(friend.getOnlineStatus()){
-                            case ONLINE:
-                                friendStatusIndicator.setFill(Color.web("#43B581"));
-                                break;
-                            case OFFLINE:
-                                friendStatusIndicator.setFill(Color.web("#747F8D"));
-                                break;
-                            case DND:
-                                friendStatusIndicator.setFill(Color.web("#F04747"));
-                                break;
-                            case BUSY:
-                                friendStatusIndicator.setFill(Color.web("#FAA61A"));
-                                break;
-                            default:
-                                friendStatusIndicator.setFill(Color.web("#747F8D"));
-                                break;
-                        }
                     } else {
-                        // Pour un ami accepté ou bloqué, on utilise directement le statut en ligne réel
                         switch(friend.getOnlineStatus()){
                             case ONLINE:
                                 friendStatusIndicator.setFill(Color.web("#43B581"));
@@ -265,6 +247,30 @@ public class MainViewController {
                                 break;
                         }
                     }
+
+                    // Ajoutez les composants de base
+                    container.getChildren().addAll(avatarPane, friendInfo);
+
+                    // Si la demande est en attente, ajoutez le conteneur d’actions
+                    if (friend.getFriendshipStatus() == FriendStatus.PENDING) {
+                        HBox actionsContainer = new HBox(5);
+                        Pane spacer = new Pane();
+                        HBox.setHgrow(spacer, Priority.ALWAYS);
+                        actionsContainer.getChildren().add(spacer);
+                        if (friend.isRequestReceived()) {
+                            Button acceptBtn = new Button("Accepter");
+                            Button rejectBtn = new Button("Refuser");
+                            acceptBtn.setOnAction(e -> acceptFriendRequest(friend.getIDFriendship()));
+                            rejectBtn.setOnAction(e -> rejectFriendRequest(friend.getIDFriendship()));
+                            actionsContainer.getChildren().addAll(acceptBtn, rejectBtn);
+                        } else {
+                            Button cancelBtn = new Button("Annuler");
+                            cancelBtn.setOnAction(e -> cancelFriendRequest(friend.getIDFriendship()));
+                            actionsContainer.getChildren().add(cancelBtn);
+                        }
+                        container.getChildren().add(actionsContainer);
+                    }
+
                     setGraphic(container);
                 }
             }
@@ -420,10 +426,7 @@ public class MainViewController {
                     }
 
                     // On crée un objet Friend à partir des informations reçues
-                    Friend newFriend = new Friend(friendResponse.friendUsername, "/Image/pp.jpg", FriendStatus.PENDING, onlineStatus);
-
-                    // Assurez-vous que setIDFriendship prend un paramètre et modifie l'objet correctement
-                    newFriend.setIDFriendship(friendResponse.friendshipId);
+                    Friend newFriend = new Friend(friendResponse.friendUsername, "/Image/pp.jpg", FriendStatus.PENDING, onlineStatus, friendResponse.friendshipId, false);
 
                     Platform.runLater(() -> {
                         // Ajout de l'ami à la liste pending et mise à jour de l'affichage
@@ -442,6 +445,109 @@ public class MainViewController {
         });
     }
     // Fin de l'ajout d'ami
+
+    // Accepter des amis
+    private void acceptFriendRequest(int friendshipId) {
+        System.out.println(friendshipId);
+        String url = API_URL + "/friends/accept-request";
+        String json = "{\"friendshipId\":" + friendshipId + "}";
+        RequestBody body = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
+        Request request = new Request.Builder()
+                .url(url)
+                .patch(body)
+                .addHeader("Authorization", "Bearer " + Utilisateur.getInstance().getToken())
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override public void onFailure(Call call, IOException e) {
+                Platform.runLater(() -> showAlert("Erreur", "Impossible d'accepter la demande d'ami."));
+                e.printStackTrace();
+            }
+            @Override public void onResponse(Call call, Response response) throws IOException {
+                Gson gson = new Gson();
+                if (response.isSuccessful()) {
+                    Platform.runLater(() -> {
+                        pendingFriends.removeIf(f -> f.getIDFriendship() == friendshipId);
+                        filterFriends(currentFilter);
+                        showAlert("Succès", "Demande d'ami acceptée !");
+                    });
+                } else {
+                    String responseBody = response.body().string();
+                    ErrorResponse errorResponse = gson.fromJson(responseBody, ErrorResponse.class);
+                    Platform.runLater(() -> showAlert("Erreur", errorResponse.message));
+                }
+            }
+        });
+    }
+
+    // Rejeter une demande d'ami
+    private void rejectFriendRequest(int friendshipId) {
+        System.out.println(friendshipId);
+        String url = API_URL + "/friends/reject-request";
+        String json = "{\"friendshipId\":" + friendshipId + "}";
+        RequestBody body = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
+        Request request = new Request.Builder()
+                .url(url)
+                .patch(body)
+                .addHeader("Authorization", "Bearer " + Utilisateur.getInstance().getToken())
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override public void onFailure(Call call, IOException e) {
+                Platform.runLater(() -> showAlert("Erreur", "Impossible de refuser la demande d'ami."));
+                e.printStackTrace();
+            }
+            @Override public void onResponse(Call call, Response response) throws IOException {
+                Gson gson = new Gson();
+                if (response.isSuccessful()) {
+                    Platform.runLater(() -> {
+                        pendingFriends.removeIf(f -> f.getIDFriendship() == friendshipId);
+                        filterFriends(currentFilter);
+                        showAlert("Succès", "Demande d'ami rejetée !");
+                    });
+                } else {
+                    String responseBody = response.body().string();
+                    ErrorResponse errorResponse = gson.fromJson(responseBody, ErrorResponse.class);
+                    Platform.runLater(() -> showAlert("Erreur", errorResponse.message));
+                }
+            }
+        });
+    }
+
+    // Annuler une demande d'ami envoyée
+    private void cancelFriendRequest(int friendshipId) {
+        System.out.println(friendshipId);
+        String url = API_URL + "/friends/cancel-request";
+        String json = "{\"friendshipId\":" + friendshipId + "}";
+        RequestBody body = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
+        Request request = new Request.Builder()
+                .url(url)
+                .delete(body)
+                .addHeader("Authorization", "Bearer " + Utilisateur.getInstance().getToken())
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override public void onFailure(Call call, IOException e) {
+                Platform.runLater(() -> showAlert("Erreur", "Impossible d'annuler la demande d'ami."));
+                e.printStackTrace();
+            }
+            @Override public void onResponse(Call call, Response response) throws IOException {
+                Gson gson = new Gson();
+                if (response.isSuccessful()) {
+                    Platform.runLater(() -> {
+                        pendingFriends.removeIf(f -> f.getIDFriendship() == friendshipId);
+                        filterFriends(currentFilter);
+                        showAlert("Succès", "Demande d'ami annulée !");
+                    });
+                } else {
+                    String responseBody = response.body().string();
+                    ErrorResponse errorResponse = gson.fromJson(responseBody, ErrorResponse.class);
+                    Platform.runLater(() -> showAlert("Erreur", errorResponse.message));
+                }
+            }
+        });
+    }
+
 
     // Récupérer la liste des amis acceptés via l'API
     private void fetchAcceptedFriends() {
@@ -487,7 +593,7 @@ public class MainViewController {
                                     status = FriendStatus.OFFLINE;
                                     break;
                             }
-                            acceptedFriends.add(new Friend(fr.friendUsername, "/Image/pp.jpg", FriendStatus.ONLINE, "ONLINE".equals(fr.friendOnlineStatus) ? FriendStatus.ONLINE : FriendStatus.OFFLINE));
+                            acceptedFriends.add(new Friend(fr.friendUsername, "/Image/pp.jpg", FriendStatus.OFFLINE, status));
                         }
                         // Réappliquer le filtre si nécessaire
                         if ("ONLINE".equals(currentFilter) || "ALL".equals(currentFilter) || "BLOCKED".equals(currentFilter)) {
@@ -546,8 +652,15 @@ public class MainViewController {
                                     onlineStatus = FriendStatus.OFFLINE;
                                     break;
                             }
+
+                            // Si fr.requestType = "SENT" Alors on a envoyé la demande
+                            // Si fr.requestType = "RECEIVED" Alors on a reçu la demande
+
+                            // Déterminer si la demande a été envoyée ou reçue
+                            boolean requestReceived = "RECEIVED".equals(fr.requestType);
+
                             // Création de l'objet Friend
-                            Friend newFriend = new Friend(fr.friendUsername, "/Image/pp.jpg", FriendStatus.PENDING, onlineStatus);
+                            Friend newFriend = new Friend(fr.friendUsername, "/Image/pp.jpg", FriendStatus.PENDING, onlineStatus, fr.friendshipId, requestReceived);
 
                             // Assurez-vous que setIDFriendship prend un paramètre et modifie l'objet correctement
                             newFriend.setIDFriendship(fr.friendshipId);
