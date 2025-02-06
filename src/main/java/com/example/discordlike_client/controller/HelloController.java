@@ -4,10 +4,13 @@ import com.example.discordlike_client.model.Utilisateur;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+
+import java.security.PrivateKey;
 import java.util.Random;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import java.nio.charset.StandardCharsets;
@@ -25,95 +28,119 @@ public class HelloController {
 
     @FXML
     private TextField emailOrPhoneField;
+    private int isOnSending = 0;
 
     @FXML
     private PasswordField passwordField;
+
+    @FXML
+    private Button loginButton;
 
     private static final String LOGIN_URL = "http://163.172.34.212:8080/api/users/login"; // URL du serveur
 
     @FXML
     protected void onLoginButtonClick(ActionEvent event) {
-        String emailUsername = emailOrPhoneField.getText();
-        String password = passwordField.getText();
+        if (isOnSending == 0) // Si on est en envoie
+        {
+            String emailUsername = emailOrPhoneField.getText();
+            String password = passwordField.getText();
 
-        if (emailUsername.isEmpty() || password.isEmpty()) {
-            showAlert("Erreur", "Tous les champs doivent être remplis.");
-            return;
-        }
-
-        // Hachage du mot de passe avec SHA-256
-        String hashedPassword = hashPassword(password);
-
-        // Construire la requête HTTP
-        OkHttpClient client = new OkHttpClient();
-
-        // Construction du JSON
-        String json = "{"
-                + "\"usernameOrEmail\":\"" + emailUsername + "\","
-                + "\"password\":\"" + hashedPassword + "\""
-                + "}";
-
-
-        // Création du corps de requête
-        RequestBody body = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
-
-        // Création de la requête HTTP POST
-        Request request = new Request.Builder()
-                .url(LOGIN_URL)
-                .post(body)
-                .build();
-
-        // Envoyer la requête
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-                Platform.runLater(() -> showAlert("Erreur", "Échec de la communication avec le serveur."));
+            if (emailUsername.isEmpty() || password.isEmpty()) {
+                showAlert("Erreur", "Tous les champs doivent être remplis.");
+                return;
             }
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String responseBody = response.body().string();
+            // On désactive le bouton pour empêcher tout nouveau clic
+            loginButton.setDisable(true);
 
-                if (response.isSuccessful()) {
-                    Platform.runLater(() -> {
-                        showAlert("Succès", "Connexion réussie !");
+            // Hachage du mot de passe avec SHA-256
+            String hashedPassword = hashPassword(password);
 
-                        // Stocker les infos de l'utilisateur
-                        Utilisateur utilisateur = Utilisateur.getInstance();
+            // Construire la requête HTTP
+            OkHttpClient client = new OkHttpClient();
 
-                        // Récupérer le pseudo et l'adresse mail
-                        utilisateur.setAdresseMail(emailUsername);
-                        utilisateur.setPseudo(emailUsername);
-
-                        // Extraire le token du JSON de la réponse
-                        try {
-                            JSONObject jsonResponse = new JSONObject(responseBody);
-
-                            String email = jsonResponse.getString("email");
-                            String username = jsonResponse.getString("username");
-                            String token = jsonResponse.getString("token");
-                            String avatar = jsonResponse.getString("avatar");
-                            String status = jsonResponse.getString("status");
-
-                            utilisateur.setAdresseMail(email);
-                            utilisateur.setPseudo(username);
-                            utilisateur.setStatutString(status);
-                            utilisateur.setToken(token);
-                            utilisateur.setImagePath(avatar);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            showAlert("Erreur", "Impossible de récupérer le token.");
-                        }
+            // Construction du JSON
+            String json = "{"
+                    + "\"usernameOrEmail\":\"" + emailUsername + "\","
+                    + "\"password\":\"" + hashedPassword + "\""
+                    + "}";
 
 
-                        redirectToMainView();
-                    });
-                } else {
-                    Platform.runLater(() -> showAlert("Erreur", "Connexion échouée. Vérifiez vos informations."));
+            // Création du corps de requête
+            RequestBody body = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
+
+            // Création de la requête HTTP POST
+            Request request = new Request.Builder()
+                    .url(LOGIN_URL)
+                    .post(body)
+                    .build();
+
+            // Envoyer la requête
+            isOnSending = 1;
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    isOnSending = 0;
+                    loginButton.setDisable(false);
+                    Platform.runLater(() -> showAlert("Erreur", "Échec de la communication avec le serveur."));
                 }
-            }
-        });
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    String responseBody = response.body().string();
+                    isOnSending = 0;
+
+                    if (response.isSuccessful()) {
+                        Platform.runLater(() -> {
+                            isOnSending = 0;
+                            // Réactiver le bouton
+                            loginButton.setDisable(false);
+
+                            showAlert("Succès", "Connexion réussie !");
+
+                            // Stocker les infos de l'utilisateur
+                            Utilisateur utilisateur = Utilisateur.getInstance();
+
+                            // Récupérer le pseudo et l'adresse mail
+                            utilisateur.setAdresseMail(emailUsername);
+                            utilisateur.setPseudo(emailUsername);
+
+                            // Extraire le token du JSON de la réponse
+                            try {
+                                JSONObject jsonResponse = new JSONObject(responseBody);
+
+                                String email = jsonResponse.getString("email");
+                                String username = jsonResponse.getString("username");
+                                String token = jsonResponse.getString("token");
+                                String avatar = jsonResponse.getString("avatar");
+                                String status = jsonResponse.getString("status");
+
+                                utilisateur.setAdresseMail(email);
+                                utilisateur.setPseudo(username);
+                                utilisateur.setStatutString(status);
+                                utilisateur.setToken(token);
+                                utilisateur.setImagePath(avatar);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                showAlert("Erreur", "Impossible de récupérer le token.");
+                            }
+
+
+                            redirectToMainView();
+                        });
+                    } else {
+                        Platform.runLater(() -> {
+                            isOnSending = 0;
+                            loginButton.setDisable(false);
+                            showAlert("Erreur", "Connexion échouée. Vérifiez vos informations.");
+                        });
+                    }
+                }
+            });
+        }
+        else {
+            Platform.runLater(() -> showAlert("Erreur", "Envoie déjà en cours !"));
+        }
     }
 
     // Méthode pour hacher un mot de passe avec SHA-256

@@ -29,7 +29,7 @@
             <!-- Conteneur des boutons de connexion alignés horizontalement -->
             <HBox spacing="10">
                 <Button fx:id="loginButton" text="Connexion" onAction="#onLoginButtonClick" style="-fx-background-color: #5865F2; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10; -fx-pref-width: 200; -fx-background-radius: 5;"/>
-                <Button fx:id="connectGuestButton" text="Connexion Invité" onAction="#onGuestLoginClick" style="-fx-background-color: #5865F2; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10; -fx-pref-width: 200; -fx-background-radius: 5;"/>
+                <!--<Button fx:id="connectGuestButton" text="Connexion Invité" onAction="#onGuestLoginClick" style="-fx-background-color: #5865F2; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10; -fx-pref-width: 200; -fx-background-radius: 5;"/>-->
             </HBox>
 
             <!-- Lien pour s'inscrire -->
@@ -42,7 +42,7 @@
             <Label text="Scanne-le avec l'application mobile Discord pour te connecter instantanément."
                    style="-fx-font-size: 12px; -fx-text-fill: #B9BBBE; -fx-wrap-text: true; -fx-max-width: 200;"/>
             <ImageView fitHeight="150" fitWidth="150">
-                <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\qrcode.png"/>
+                <Image url="C:\Users\Quent\Documents\DiscordClient\src\main\resources\Image\qrcode.png"/>
             </ImageView>
         </VBox>
     </HBox>

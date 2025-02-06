@@ -7,7 +7,6 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.Priority?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
 
@@ -40,7 +39,7 @@
         <Button fx:id="buttonLogout"
                 text="⏻"
                 style="
-            -fx-font-size: 20px;
+            -fx-font-size: 18px;
             -fx-background-color: transparent;
             -fx-text-fill: red;
             -fx-cursor: hand;
@@ -61,7 +60,8 @@
             <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: #40444B; -fx-padding: 8; -fx-background-radius: 5;">
                 <ImageView fitWidth="28" fitHeight="28">
                     <image>
-                        <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\friends.png"/>
+                        <Image url="C:\Users\Quent\Documents\DiscordClient\src\main\resources\Image\friends.png"/>
+                        <!--<Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\friends.png"/>-->
                     </image>
                 </ImageView>
                 <Label text="Amis" style="-fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;"/>
@@ -71,7 +71,8 @@
             <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 8;">
                 <ImageView fitWidth="28" fitHeight="28">
                     <image>
-                        <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\library.png"/>
+                        <Image url="C:\Users\Quent\Documents\DiscordClient\src\main\resources\Image\library.png"/>
+                        <!--<Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\library.png"/-->
                     </image>
                 </ImageView>
                 <Label text="Bibliothèque" style="-fx-text-fill: #B9BBBE; -fx-font-size: 14px; -fx-font-weight: bold;"/>
@@ -81,7 +82,8 @@
             <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 8;">
                 <ImageView fitWidth="28" fitHeight="28">
                     <image>
-                        <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\nitro.png"/>
+                        <Image url="C:\Users\Quent\Documents\DiscordClient\src\main\resources\Image\nitro.png"/>
+                        <!--<Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\nitro.png"/>-->
                     </image>
                 </ImageView>
                 <Label text="Nitro" style="-fx-text-fill: #B9BBBE; -fx-font-size: 14px; -fx-font-weight: bold;"/>
@@ -91,7 +93,8 @@
             <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 8;">
                 <ImageView fitWidth="28" fitHeight="28">
                     <image>
-                        <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\shop.png"/>
+                        <Image url="C:\Users\Quent\Documents\DiscordClient\src\main\resources\Image\shop.png"/>
+                        <!--<Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\shop.png"/>-->
                     </image>
                 </ImageView>
                 <Label text="Boutique" style="-fx-text-fill: #B9BBBE; -fx-font-size: 14px; -fx-font-weight: bold;"/>
@@ -138,17 +141,20 @@
             <HBox spacing="8" alignment="CENTER">
                 <ImageView fitWidth="17" fitHeight="17">
                     <image>
-                        <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\microphone.png"/>
+                        <Image url="C:\Users\Quent\Documents\DiscordClient\src\main\resources\Image\microphone.png"/>
+                        <!--<Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\microphone.png"/>-->
                     </image>
                 </ImageView>
                 <ImageView fitWidth="17" fitHeight="17">
                     <image>
-                        <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\headset.png"/>
+                        <Image url="C:\Users\Quent\Documents\DiscordClient\src\main\resources\Image\headset.png"/>
+                        <!--<Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\headset.png"/>-->
                     </image>
                 </ImageView>
                 <ImageView fitWidth="17" fitHeight="17">
                     <image>
-                        <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\settings.png"/>
+                        <Image url="C:\Users\Quent\Documents\DiscordClient\src\main\resources\Image\settings.png"/>
+                        <!--<Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\settings.png"/>-->
                     </image>
                 </ImageView>
             </HBox>
