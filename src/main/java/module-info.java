@@ -16,5 +16,5 @@ module com.example.discordlike_client {
     exports com.example.discordlike_client.controller;
     opens com.example.discordlike_client.controller to javafx.fxml, com.google.gson;
     exports com.example.discordlike_client.model;
-    opens com.example.discordlike_client.model to javafx.fxml;
+    opens com.example.discordlike_client.model to com.google.gson, javafx.fxml;
 }

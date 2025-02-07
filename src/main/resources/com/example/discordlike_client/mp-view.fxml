@@ -13,14 +13,34 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Separator?>
 <HBox fx:id="rootPane"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.example.discordlike_client.controller.PrivateMessagesController"
       style="-fx-background-color: #36393F;">
 
     <!-- 1) Barre de serveurs : devient une ListView -->
-    <VBox spacing="8"
+    <VBox spacing="0"
           style="-fx-background-color: #202225; -fx-pref-width: 68;">
+
+        <!-- Bloc du haut : logo Discord, une ligne de séparation, et un label -->
+        <VBox alignment="CENTER" spacing="6" style="-fx-padding: 10 0 0 0;">
+            <Label text="Discord" style="-fx-text-fill: #8E9297; -fx-font-size: 12px; -fx-font-weight: bold;" />
+
+            <!-- Conteneur : on gère la bordure circulaire sur LUI, pas sur l'ImageView -->
+            <StackPane fx:id="discordLogoContainer" alignment="CENTER" minWidth="60" minHeight="60" prefWidth="65" prefHeight="65" maxWidth="65" maxHeight="65" style="
+               -fx-border-color: grey; -fx-border-width: 2; -fx-border-radius: 30; -fx-background-radius: 30; -fx-padding: 4;" onMouseClicked="#handleFriendListClick">
+
+                <ImageView fx:id="discordLogo" fitWidth="40" fitHeight="40">
+                    <image>
+                        <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\discord.png"/>
+                    </image>
+                </ImageView>
+            </StackPane>
+
+            <!-- Ligne séparatrice -->
+            <Separator style="-fx-background-color: #2F3136; -fx-pref-width: 32;" />
+        </VBox>
 
         <!-- LISTE DES SERVEURS (icônes rondes) -->
         <ListView fx:id="serversListView"

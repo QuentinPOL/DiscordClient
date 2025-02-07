@@ -12,7 +12,9 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
@@ -20,22 +22,21 @@ import okhttp3.*;
 
 import java.io.IOException;
 
-public class PrivateMessagesController {
+public class ServersController {
+
+    private ServerItem serverItem;
 
     @FXML
-    private Label friendNameLabel;
+    private Label channelNameLabel;
     @FXML
     private VBox messagesContainer;    // Contiendra les messages
     @FXML
     private TextField messageInputField;
     @FXML
     private ScrollPane scrollPane;
-    @FXML
-    private Button amisButton;
 
     @FXML private HBox rootPane;
     @FXML private Label usernameLabel;
-    @FXML private ListView<String> privateMessagesList;
     @FXML private ListView<ServerItem> serversListView;
 
     @FXML private StackPane discordLogoContainer;
@@ -44,9 +45,15 @@ public class PrivateMessagesController {
     @FXML private Label statusText;
     @FXML private Circle statusIndicator;
 
+
     // URL de l'API et client HTTP
     private static final String API_URL = "http://163.172.34.212:8080/api";
     private final OkHttpClient client = new OkHttpClient();
+
+    public void setServerItem(ServerItem serverItem) {
+        this.serverItem = serverItem;
+        channelNameLabel.setText("#général");
+    }
 
     @FXML
     public void initialize() {
@@ -73,18 +80,14 @@ public class PrivateMessagesController {
         ContextMenu statusMenu = createStatusMenu();
         userAvatar.setOnMouseClicked((MouseEvent event) -> {
             statusMenu.show(statusIndicator, event.getScreenX(), event.getScreenY());
+            userAvatar.setStyle("-fx-cursor: hand;");
         });
-
-        // Configuration de la ListView des messages privés
-        privateMessagesList.getItems().addAll("alexpel", "b-KOS", "cloudbray", "Joris HURTEL");
-        privateMessagesCellFactory();
 
         // Liste de serveurs (icônes)
         serversListView.getItems().addAll(
                 new ServerItem("/Image/6537937.jpg")
         );
         serversListView.setFocusTraversable(false);
-        privateMessagesList.setFocusTraversable(false);
 
         // Configuration de la ListView des serveurs (icône rond)
         serversListView.setCellFactory(list -> new ListCell<ServerItem>() {
@@ -105,38 +108,10 @@ public class PrivateMessagesController {
                 Circle clip = new Circle(32, 32, 32);
                 imageView.setClip(clip);
                 setGraphic(imageView);
-                setOnMouseEntered(event -> setStyle("-fx-background-color: #40444B; -fx-background-radius: 5;"));
-                setOnMouseExited(event -> setStyle("-fx-background-color: transparent;"));
+                this.setStyle("-fx-background-color: #40444B; -fx-background-radius: 5;");
 
-                // Clic : ouvrir la vue server-view.fxml
-                setOnMouseClicked(event -> {
-                    try {
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/discordlike_client/server-view.fxml"));
-                        Parent root = loader.load();
-
-                        // Récupération du contrôleur et passage du serverItem
-                        ServersController controller = loader.getController();
-                        controller.setServerItem(item);
-
-                        Stage stage = (Stage) rootPane.getScene().getWindow();
-                        // 1) Mémoriser l'état avant de changer la scène
-                        boolean wasMaximized = stage.isMaximized();
-                        double oldWidth = stage.getWidth();
-                        double oldHeight = stage.getHeight();
-
-                        // 2) Charger votre nouveau root FXML
-                        stage.setScene(new Scene(root));
-
-                        // 3) Restaurer l'état (maximisé) ou la taille
-                        stage.setMaximized(wasMaximized);
-
-                        stage.setWidth(oldWidth);
-                        stage.setHeight(oldHeight);
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
+                setOnMouseEntered(event -> setStyle("-fx-background-color: #40444B; -fx-background-radius: 5; -fx-cursor: hand;"));
+                setOnMouseExited(event -> setStyle("-fx-background-color: #40444B; -fx-background-radius: 5;"));
             }
         });
 
@@ -153,25 +128,6 @@ public class PrivateMessagesController {
                         "-fx-faint-focus-color: transparent;"
         );
 
-        // 1) Créer le HBox + ImageView + Label
-        HBox hbox = new HBox(10);
-        hbox.setAlignment(Pos.CENTER_LEFT);
-
-        ImageView imageView = new ImageView(
-                getClass().getResource("/Image/friends.png").toExternalForm()
-        );
-        imageView.setFitWidth(28);
-        imageView.setFitHeight(28);
-
-        Label label = new Label("Amis");
-        label.setStyle("-fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;");
-
-        hbox.getChildren().addAll(imageView, label);
-
-        // 2) Affecter le HBox comme "graphic" du bouton
-        amisButton.setGraphic(hbox);
-        amisButton.setContentDisplay(ContentDisplay.LEFT);
-
         // Rendre l’image elle-même circulaire
         applyCircularClip(discordLogo);
 
@@ -182,7 +138,8 @@ public class PrivateMessagesController {
                             "-fx-border-width: 2; " +
                             "-fx-border-radius: 30; " +
                             "-fx-background-radius: 30; " +
-                            "-fx-padding: 4;"
+                            "-fx-padding: 4;" +
+                            "-fx-cursor: hand;"
             );
         });
         discordLogoContainer.setOnMouseExited(e -> {
@@ -197,12 +154,12 @@ public class PrivateMessagesController {
     }
 
     // Méthode appelée depuis le MainViewController
-    public void setFriendName(String friendName) {
+    public void setChannelName(String channelName) {
         // Le label affiché en haut de la colonne principale
-        friendNameLabel.setText(friendName);
+        channelNameLabel.setText(channelName);
 
         // Charger/construire la conversation
-        loadConversationForFriend(friendName);
+        loadConversationForFriend(channelName);
     }
 
     private void loadConversationForFriend(String friendName) {
@@ -311,73 +268,6 @@ public class PrivateMessagesController {
             messageInputField.clear();
             Platform.runLater(() -> scrollPane.setVvalue(1.0));
         }
-    }
-
-    // Cell factory pour la ListView des messages privés
-    private void privateMessagesCellFactory() {
-        privateMessagesList.setCellFactory(list -> new ListCell<String>() {
-            // Déclaration des composants pour la cellule
-            private HBox container = new HBox(10);
-            private StackPane avatarStack = new StackPane();
-            private ImageView avatar = new ImageView();
-            private Circle statusIndicator = new Circle(6);
-            private VBox textContainer = new VBox(2);
-            private Label pseudoLabel = new Label();
-            private Label statusLabel = new Label();
-
-            {
-                // Configuration de l'avatar : taille et clip circulaire
-                avatar.setFitWidth(40);
-                avatar.setFitHeight(40);
-                Circle clip = new Circle(20, 20, 20);
-                avatar.setClip(clip);
-
-                // Configuration de l'indicateur de statut (pastille)
-                statusIndicator.setStroke(Color.WHITE);
-                statusIndicator.setStrokeWidth(2);
-                statusIndicator.setFill(Color.web("#43B581"));
-
-                // On superpose l'indicateur sur l'avatar
-                avatarStack.getChildren().addAll(avatar, statusIndicator);
-                StackPane.setAlignment(statusIndicator, Pos.BOTTOM_RIGHT);
-
-                // Configuration des labels (pseudo et libellé du statut)
-                pseudoLabel.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");
-                statusLabel.setStyle("-fx-text-fill: #B9BBBE; -fx-font-size: 12px;");
-                textContainer.getChildren().addAll(pseudoLabel, statusLabel);
-
-                container.setAlignment(Pos.CENTER_LEFT);
-                container.getChildren().addAll(avatarStack, textContainer);
-            }
-
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setGraphic(null);
-                } else {
-                    pseudoLabel.setText(item);
-                    statusLabel.setText("En ligne");
-                    statusIndicator.setFill(Color.web("#43B581"));  // Par exemple : vert pour "en ligne"
-
-                    // Charger l'image de l'avatar (à remplacer par le chemin dynamique de l’avatar de l’ami)
-                    avatar.setImage(new Image(getClass().getResource("/Image/pp.jpg").toExternalForm()));
-
-                    this.setOnMouseEntered(e -> {
-                        setStyle("-fx-background-color: #40444B;");
-                    });
-                    this.setOnMouseExited(e -> {
-                        // Couleur de fond quand la cellule n'est pas sélectionnée
-                        setStyle("-fx-background-color: transparent;");
-                    });
-
-                    setGraphic(container);
-
-                    // Gestion du clic sur la cellule : ouverture de la conversation
-                    //container.setOnMouseClicked(e -> onMessagePrivateClicked(item));
-                }
-            }
-        });
     }
 
     // Appliquer un masque circulaire à une ImageView
@@ -505,7 +395,7 @@ public class PrivateMessagesController {
     }
 
     @FXML
-    private void handleFriendListClick() {
+    private void handlePrivateMessagetClick() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/discordlike_client/main-view.fxml"));
             Parent root = loader.load();

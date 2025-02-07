@@ -1,4 +1,4 @@
-package com.example.discordlike_client.controller;
+package com.example.discordlike_client.model;
 
 public class ServerItem {
     private String imagePath;

@@ -1,5 +1,6 @@
 package com.example.discordlike_client.controller;
 
+import com.example.discordlike_client.model.ServerItem;
 import com.example.discordlike_client.model.Utilisateur;
 import com.example.discordlike_client.model.Friend;
 import com.example.discordlike_client.model.FriendStatus;
@@ -7,7 +8,6 @@ import com.google.gson.Gson;  // Assurez-vous d'ajouter Gson à vos dépendances
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.geometry.Pos;
@@ -33,6 +33,8 @@ public class MainViewController {
     @FXML private ListView<String> privateMessagesList;
     @FXML private ListView<ServerItem> serversListView;
 
+    @FXML private StackPane discordLogoContainer;
+    @FXML private ImageView discordLogo;
     @FXML private ImageView userAvatar;
     @FXML private Circle statusIndicator;
     @FXML private Label statusText;
@@ -137,6 +139,36 @@ public class MainViewController {
                 setGraphic(imageView);
                 setOnMouseEntered(event -> setStyle("-fx-background-color: #40444B; -fx-background-radius: 5;"));
                 setOnMouseExited(event -> setStyle("-fx-background-color: transparent;"));
+
+                // Clic : ouvrir la vue server-view.fxml
+                setOnMouseClicked(event -> {
+                    try {
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/discordlike_client/server-view.fxml"));
+                        Parent root = loader.load();
+
+                        // Récupération du contrôleur et passage du serverItem
+                        ServersController controller = loader.getController();
+                        controller.setServerItem(item);
+
+                        Stage stage = (Stage) rootPane.getScene().getWindow();
+                        // 1) Mémoriser l'état avant de changer la scène
+                        boolean wasMaximized = stage.isMaximized();
+                        double oldWidth = stage.getWidth();
+                        double oldHeight = stage.getHeight();
+
+                        // 2) Charger votre nouveau root FXML
+                        stage.setScene(new Scene(root));
+
+                        // 3) Restaurer l'état (maximisé) ou la taille
+                        stage.setMaximized(wasMaximized);
+
+                        stage.setWidth(oldWidth);
+                        stage.setHeight(oldHeight);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
             }
         });
 
@@ -296,6 +328,29 @@ public class MainViewController {
         applyHoverEffect(btnPending, "-fx-background-color: transparent; -fx-text-fill: white;");
         applyHoverEffect(btnBlocked, "-fx-background-color: transparent; -fx-text-fill: white;");
         applyHoverEffect(btnAdd, "-fx-background-color: #3BA55D; -fx-text-fill: white;");
+
+        // Rendre l’image elle-même circulaire
+        applyCircularClip(discordLogo);
+
+        // Gérer le hover sur le conteneur pour changer la bordure en blanc
+        discordLogoContainer.setOnMouseEntered(e -> {
+            discordLogoContainer.setStyle(
+                    "-fx-border-color: cyan; " +
+                            "-fx-border-width: 2; " +
+                            "-fx-border-radius: 30; " +
+                            "-fx-background-radius: 30; " +
+                            "-fx-padding: 4;"
+            );
+        });
+        discordLogoContainer.setOnMouseExited(e -> {
+            discordLogoContainer.setStyle(
+                    "-fx-border-color: grey; " +
+                            "-fx-border-width: 2; " +
+                            "-fx-border-radius: 30; " +
+                            "-fx-background-radius: 30; " +
+                            "-fx-padding: 4;"
+            );
+        });
 
         // Par défaut, appliquer le filtre sur les amis en ligne
         filterFriends("ONLINE");
