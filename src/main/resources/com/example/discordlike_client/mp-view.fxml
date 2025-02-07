@@ -3,7 +3,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
@@ -12,9 +11,11 @@
 
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
 <HBox fx:id="rootPane"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.example.discordlike_client.controller.MainViewController"
+      fx:controller="com.example.discordlike_client.controller.PrivateMessagesController"
       style="-fx-background-color: #36393F;">
 
     <!-- 1) Barre de serveurs : devient une ListView -->
@@ -57,15 +58,14 @@
               style="-fx-background-color: #2F3136; -fx-pref-width: 220; -fx-padding: 10;">
 
             <!-- Amis -->
-            <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: #40444B; -fx-padding: 8; -fx-background-radius: 5;">
-                <ImageView fitWidth="28" fitHeight="28">
-                    <image>
-                        <!--<Image url="C:\Users\Quent\Documents\DiscordClient\src\main\resources\Image\friends.png"/>-->
-                        <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\friends.png"/>
-                    </image>
-                </ImageView>
-                <Label text="Amis" style="-fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;"/>
-            </HBox>
+            <Button fx:id="amisButton"
+                    text=""
+                    style="-fx-background-color: #40444B;
+               -fx-background-radius: 5;
+               -fx-padding: 8;
+               -fx-text-fill: white;"
+                    maxWidth="Infinity"
+                    onAction="#handleFriendListClick"/>
 
             <!-- Bibliothèque -->
             <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 8;">
@@ -161,52 +161,94 @@
         </HBox>
     </VBox>
 
-    <!-- 3) Colonne principale -->
+    <!-- ********************************************** -->
+    <!-- 3) COLONNE CENTRALE : conversation Discord     -->
+    <!-- ********************************************** -->
     <VBox HBox.hgrow="ALWAYS" style="-fx-background-color: #36393F;">
-        <VBox style="-fx-background-color: #2F3136; -fx-padding: 10;">
-            <TextField fx:id="searchField"
-                       promptText="Rechercher/lancer une conversation..."
-                       style="-fx-background-color: #202225; -fx-text-fill: white; -fx-prompt-text-fill: #72767D; -fx-pref-width: 100%;"/>
-            <Pane style="-fx-min-height: 8;" />
 
-            <!-- Ligne regroupant les boutons de filtre et le formulaire d'ajout inline -->
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <Button text="Amis" style="-fx-background-color: transparent; -fx-text-fill: white;"/>
-                <Button fx:id="btnOnline" text="En ligne" style="-fx-background-color: #5865F2; -fx-text-fill: white;" onAction="#handleOnlineFriends"/>
-                <Button fx:id="btnAll" text="Tous" style="-fx-background-color: transparent; -fx-text-fill: white;" onAction="#handleAllFriends"/>
-                <Button fx:id="btnPending" text="En attente" style="-fx-background-color: transparent; -fx-text-fill: white;" onAction="#handlePendingFriends"/>
-                <Button fx:id="btnBlocked" text="Bloqué" style="-fx-background-color: transparent; -fx-text-fill: white;" onAction="#handleBlockedFriends"/>
-                <Button fx:id="btnAdd" text="Ajouter" style="-fx-background-color: #3BA55D; -fx-text-fill: white;" onAction="#handleAddFriend"/>
+        <!-- Barre du haut (nom de l'ami) -->
+        <HBox style="-fx-background-color: #2F3136; -fx-padding: 10;
+                     -fx-alignment: CENTER_LEFT;">
+            <Label fx:id="friendNameLabel"
+                   text="Nom d'ami"
+                   style="-fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;"/>
+            <Pane HBox.hgrow="ALWAYS" />
+            <!-- Icônes "call" ou "pinned messages" si besoin -->
+        </HBox>
 
-                <!-- Espaceur pour pousser le formulaire vers la droite -->
-                <Pane HBox.hgrow="ALWAYS"/>
+        <!-- Zone principale scrollable contenant nos messages -->
+        <ScrollPane fx:id="scrollPane"
+                    fitToWidth="true"
+                    style="-fx-background: transparent;"
+                    VBox.vgrow="ALWAYS">
+            <!-- VBox dans laquelle on va insérer chaque "message" (via code) -->
+            <VBox fx:id="messagesContainer"
+                  spacing="8"
+                  style="-fx-padding: 20 10 10 10;"/>
+        </ScrollPane>
 
-                <!-- Formulaire d'ajout inline, initialement caché -->
-                <HBox fx:id="addFriendContainer" visible="false" spacing="10" alignment="CENTER_LEFT">
-                    <!-- Champ de saisie agrandi via prefWidth (ici 250, ajustable) -->
-                    <TextField fx:id="friendNameField" promptText="Entrez le pseudo de l'ami"
-                               style="-fx-background-color: #202225; -fx-text-fill: white; -fx-prompt-text-fill: #72767D;"
-                               prefWidth="250"/>
-                    <Button text="Valider" onAction="#handleConfirmAddFriend" style="-fx-background-color: #3BA55D; -fx-text-fill: white;"/>
-                    <Button text="Annuler" onAction="#handleCancelAddFriend" style="-fx-background-color: #F04747; -fx-text-fill: white;"/>
-                </HBox>
+        <!-- Champ en bas pour écrire un message (barre grise) -->
+        <HBox spacing="8" style="-fx-background-color: #40444B; -fx-padding: 10;">
+            <TextField fx:id="messageInputField"
+                       promptText="Envoyer un message à..."
+                       style="-fx-background-color: #40444B; -fx-text-fill: white;
+                              -fx-prompt-text-fill: #B9BBBE;"
+                       HBox.hgrow="ALWAYS"/>
+            <Button text="Envoyer" onAction="#handleSendMessage"
+                    style="-fx-background-color: #5865F2;
+                           -fx-text-fill: white;
+                           -fx-font-weight: bold;
+                           -fx-cursor: hand;"/>
+        </HBox>
+    </VBox>
+
+    <!-- ******************************************* -->
+    <!-- 4) COLONNE DROITE : profil de l'ami cliqué -->
+    <!-- ******************************************* -->
+    <VBox spacing="0"
+          style="-fx-background-color: #2F3136; -fx-pref-width: 280;
+                 -fx-max-width: 280;">
+
+        <!-- Contenu principal du profil -->
+        <VBox spacing="10" style="-fx-padding: 10;">
+
+            <!-- Avatar + pseudo + tag -->
+            <HBox spacing="10" style="-fx-alignment: CENTER_LEFT;">
+                <ImageView fx:id="friendAvatar" fitWidth="60" fitHeight="60"/>
+                <VBox spacing="2">
+                    <Label fx:id="friendPseudo" text="b-KOS"
+                           style="-fx-text-fill: white; -fx-font-size: 18px;
+                                  -fx-font-weight: bold;"/>
+                    <Label fx:id="friendTag" text="french_trapper"
+                           style="-fx-text-fill: #B9BBBE; -fx-font-size: 12px;"/>
+                </VBox>
             </HBox>
-        </VBox>
 
-        <VBox spacing="5" style="-fx-padding: 10;">
-            <Label fx:id="friendsLabel" text="En Ligne" style="-fx-text-fill: #8E9297; -fx-font-size: 12px;"/>
-            <ListView fx:id="friendsList" VBox.vgrow="ALWAYS" />
+            <!-- A propos de moi -->
+            <Label text="À propos de moi"
+                   style="-fx-text-fill: white; -fx-font-size: 14px;
+                          -fx-font-weight: bold;"/>
+            <Label fx:id="friendAboutMe" text="Look at the moon ! What a big hole !"
+                   wrapText="true"
+                   style="-fx-text-fill: #B9BBBE; -fx-font-size: 12px;"/>
+
+            <!-- Date d'inscription, serveurs en commun, amis en commun... -->
+            <Label fx:id="friendDateJoined" text="Membre depuis 27 sept. 2017"
+                   style="-fx-text-fill: #B9BBBE; -fx-font-size: 12px;"/>
+            <Label fx:id="commonServersLabel" text="Serveurs en commun — 1"
+                   style="-fx-text-fill: #B9BBBE; -fx-font-size: 12px;"/>
+            <Label fx:id="commonFriendsLabel" text="Amis en commun — 5"
+                   style="-fx-text-fill: #B9BBBE; -fx-font-size: 12px;"/>
+
+            <Pane VBox.vgrow="ALWAYS"/>
+            <Button fx:id="viewProfileButton" text="Voir le profil complet"
+                    style="-fx-background-color: #40444B;
+                           -fx-text-fill: #B9BBBE;
+                           -fx-font-size: 12px;
+                           -fx-font-weight: bold;
+                           -fx-cursor: hand;
+                           -fx-background-radius: 4;
+                           -fx-padding: 8;"/>
         </VBox>
     </VBox>
-
-    <!-- 4) Colonne de droite -->
-    <VBox spacing="10"
-          style="-fx-background-color: #2F3136; -fx-pref-width: 280; -fx-padding: 10;">
-        <Label text="En ligne" style="-fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;"/>
-        <Label text="Tout est calme... pour le moment." style="-fx-text-fill: #8E9297; -fx-font-size: 14px;"/>
-        <Label text="Quand un ami commencera une activité, comme jouer à un jeu ou passer du temps sur le chat vocal, ce sera affiché ici !"
-               wrapText="true"
-               style="-fx-text-fill: #8E9297; -fx-font-size: 12px;"/>
-    </VBox>
-
 </HBox>

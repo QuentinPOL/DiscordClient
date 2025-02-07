@@ -65,7 +65,6 @@ public class HelloController {
                     + "\"password\":\"" + hashedPassword + "\""
                     + "}";
 
-
             // Création du corps de requête
             RequestBody body = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
 

@@ -7,6 +7,7 @@ import com.google.gson.Gson;  // Assurez-vous d'ajouter Gson à vos dépendances
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.geometry.Pos;
@@ -109,9 +110,7 @@ public class MainViewController {
 
         // Liste de serveurs (icônes)
         serversListView.getItems().addAll(
-                new ServerItem("/Image/testDiscord.png"),
-                new ServerItem("/Image/testDiscord.png"),
-                new ServerItem("/Image/testDiscord.png")
+                new ServerItem("/Image/6537937.jpg")
         );
         serversListView.setFocusTraversable(false);
         privateMessagesList.setFocusTraversable(false);
@@ -148,76 +147,82 @@ public class MainViewController {
         // Configuration de la ListView des amis
         friendsList.setStyle("-fx-background-color: transparent; -fx-control-inner-background: transparent;");
         friendsList.setCellFactory(list -> new ListCell<Friend>() {
-            private HBox container = new HBox(10);
-            private StackPane avatarPane = new StackPane();
-            private ImageView avatar = new ImageView();
-            private Circle friendStatusIndicator = new Circle(6);
-            private VBox friendInfo = new VBox(2);
-            private Label pseudoLabel = new Label();
-            private Label statusLabel = new Label();
+            // Conteneurs et nœuds réutilisés
+            private final HBox container = new HBox(10);
+            private final StackPane avatarPane = new StackPane();
+            private final ImageView avatar = new ImageView();
+            private final Circle friendStatusIndicator = new Circle(6);
+            private final VBox friendInfo = new VBox(2);
+            private final Label pseudoLabel = new Label();
+            private final Label statusLabel = new Label();
 
             {
-                // Configuration de l'avatar
+                // Configuration initiale (appelée 1 seule fois par cellule)
+
+                // 1) Avatar
                 avatar.setFitWidth(40);
                 avatar.setFitHeight(40);
                 Circle clip = new Circle(20, 20, 20);
                 avatar.setClip(clip);
 
-                // Configuration de la pastille de statut
+                // 2) Pastille de statut
                 friendStatusIndicator.setStroke(Color.WHITE);
                 friendStatusIndicator.setStrokeWidth(2);
                 StackPane.setAlignment(friendStatusIndicator, Pos.BOTTOM_RIGHT);
                 avatarPane.getChildren().addAll(avatar, friendStatusIndicator);
 
-                // Configuration des labels
+                // 3) Labels
                 pseudoLabel.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");
                 statusLabel.setStyle("-fx-text-fill: #B9BBBE; -fx-font-size: 12px;");
                 friendInfo.getChildren().addAll(pseudoLabel, statusLabel);
 
-                // Assemblage dans le conteneur principal
-                container.getChildren().addAll(avatarPane, friendInfo);
+                // 4) Conteneur principal
                 container.setAlignment(Pos.CENTER_LEFT);
-                container.setStyle(
-                        "-fx-background-color: transparent; " +
-                                "-fx-border-color: #40444B; " +
-                                "-fx-border-width: 0 0 1 0; " +
-                                "-fx-padding: 5 10 5 10;"
-                );
+                container.setStyle("-fx-background-color: transparent; "
+                        + "-fx-border-color: #40444B; "
+                        + "-fx-border-width: 0 0 1 0; "
+                        + "-fx-padding: 5 10 5 10;");
 
-                // Effet hover
+                // 5) Survol (hover) sur la cellule
                 this.setOnMouseEntered(e -> {
-                    container.setStyle(
-                            "-fx-background-color: rgba(255,255,255,0.1); " +
-                                    "-fx-border-color: #40444B; " +
-                                    "-fx-border-width: 0 0 1 0; " +
-                                    "-fx-padding: 5 10 5 10;"
-                    );
+                    // On ne colore que si la cellule n’est pas vide
+                    if (getItem() != null) {
+                        setStyle("-fx-background-color: #40444B;");
+                    }
                 });
                 this.setOnMouseExited(e -> {
-                    container.setStyle(
-                            "-fx-background-color: transparent; " +
-                                    "-fx-border-color: #40444B; " +
-                                    "-fx-border-width: 0 0 1 0; " +
-                                    "-fx-padding: 5 10 5 10;"
-                    );
+                    // On ne restaure le style que si la cellule n’est pas vide
+                    if (getItem() != null) {
+                        setStyle("-fx-background-color: transparent;");
+                    }
                 });
             }
 
             @Override
             protected void updateItem(Friend friend, boolean empty) {
                 super.updateItem(friend, empty);
-                if (empty || friend == null) {
-                    setGraphic(null);
-                } else {
-                    // Tout le code qui utilise 'friend' doit être dans ce bloc
-                    container.getChildren().clear();
 
+                if (empty || friend == null) {
+                    // (A) Cellule vide ou « placeholder »
+                    setGraphic(null);
+                    setText(null);
+                    // Supprimer tout style éventuel :
+                    setStyle("");
+                    // Vider le contenu (évite qu’un ancien contenu traîne dans une cellule réutilisée)
+                    container.getChildren().clear();
+                } else {
+                    // (B) Cellule avec un Friend réel
+                    container.getChildren().clear();  // On repart sur du « propre »
+
+                    // 1) Avatar
                     Image img = new Image(getClass().getResource(friend.getAvatarPath()).toExternalForm());
                     avatar.setImage(img);
+
+                    // 2) Pseudo
                     pseudoLabel.setText(friend.getPseudo());
 
-                    // Configuration du statut
-                    switch(friend.getOnlineStatus()){
+                    // 3) Statut en ligne
+                    switch(friend.getOnlineStatus()) {
                         case ONLINE:
                             friendStatusIndicator.setFill(Color.web("#43B581"));
                             statusLabel.setText("En ligne");
@@ -244,14 +249,15 @@ public class MainViewController {
                             break;
                     }
 
+                    // 4) Statut PENDING ?
                     if (friend.getFriendshipStatus() == FriendStatus.PENDING) {
                         statusLabel.setText("En attente");
                     }
 
-                    // Ajoutez les composants de base
+                    // 5) Assembler l’affichage de base
                     container.getChildren().addAll(avatarPane, friendInfo);
 
-                    // Si la demande est en attente, ajoutez le conteneur d’actions
+                    // 6) Demande en attente ? Boutons Accepter/Refuser/Annuler
                     if (friend.getFriendshipStatus() == FriendStatus.PENDING) {
                         HBox actionsContainer = new HBox(5);
                         Pane spacer = new Pane();
@@ -271,7 +277,12 @@ public class MainViewController {
                         container.getChildren().add(actionsContainer);
                     }
 
+                    // 7) Appliquer le conteneur à la cellule
                     setGraphic(container);
+                    setText(null);
+
+                    // 8) (Ré)initialiser le style normal (pour le survol)
+                    setStyle("-fx-background-color: transparent;");
                 }
             }
         });
@@ -468,10 +479,28 @@ public class MainViewController {
 
                     if (response.isSuccessful()) {
                         Platform.runLater(() -> {
-                            pendingFriends.removeIf(f -> f.getIDFriendship() == friendshipId);
-                            //acceptedFriends.add(new Friend());
-                            filterFriends(currentFilter);
-                            showAlert("Succès", "Demande d'ami acceptée !");
+                            // Trouver l'ami correspondant dans pendingFriends
+                            Friend friend = pendingFriends.stream()
+                                    .filter(f -> f.getIDFriendship() == friendshipId)
+                                    .findFirst()
+                                    .orElse(null);
+
+                            if (friend != null) {
+                                // Supprimer de pendingFriends
+                                pendingFriends.remove(friend);
+
+                                // Ajouter à acceptedFriends avec les bonnes données
+                                acceptedFriends.add(new Friend(
+                                        friend.getPseudo(), // Nom d'utilisateur
+                                        "/Image/pp.jpg", // Image de profil
+                                        FriendStatus.OFFLINE, // Statut
+                                        friend.getOnlineStatus()
+                                ));
+
+                                // Filtrer et mettre à jour l'affichage
+                                filterFriends(currentFilter);
+                                showAlert("Succès", "Demande d'ami acceptée !");
+                            }
                         });
                     } else {
                         ErrorResponse errorResponse = gson.fromJson(responseBodyString, ErrorResponse.class);
@@ -710,7 +739,6 @@ public class MainViewController {
                 // Configuration de l'indicateur de statut (pastille)
                 statusIndicator.setStroke(Color.WHITE);
                 statusIndicator.setStrokeWidth(2);
-                // Par défaut, couleur pour "En ligne" (à adapter selon vos données)
                 statusIndicator.setFill(Color.web("#43B581"));
 
                 // On superpose l'indicateur sur l'avatar
@@ -732,23 +760,25 @@ public class MainViewController {
                 if (empty || item == null) {
                     setGraphic(null);
                 } else {
-                    // Ici, "item" représente le pseudo de l'ami.
-                    // Si vous avez un modèle plus complet (par exemple, un objet PrivateMessageItem ou Friend),
-                    // vous pourrez récupérer directement avatarPath et statut réel.
                     pseudoLabel.setText(item);
-
-                    // Exemple statique : on affiche "En ligne" et on charge un avatar par défaut.
-                    // Remplacez ces valeurs par celles de votre source de données.
                     statusLabel.setText("En ligne");
                     statusIndicator.setFill(Color.web("#43B581"));  // Par exemple : vert pour "en ligne"
 
                     // Charger l'image de l'avatar (à remplacer par le chemin dynamique de l’avatar de l’ami)
                     avatar.setImage(new Image(getClass().getResource("/Image/pp.jpg").toExternalForm()));
 
+                    this.setOnMouseEntered(e -> {
+                        setStyle("-fx-background-color: #40444B;");
+                    });
+                    this.setOnMouseExited(e -> {
+                        // Couleur de fond quand la cellule n'est pas sélectionnée
+                        setStyle("-fx-background-color: transparent;");
+                    });
+
                     setGraphic(container);
 
                     // Gestion du clic sur la cellule : ouverture de la conversation
-                    //container.setOnMouseClicked(e -> openConversation(item));
+                    container.setOnMouseClicked(e -> onMessagePrivateClicked(item));
                 }
             }
         });
@@ -882,6 +912,44 @@ public class MainViewController {
                 }
             }
         });
+    }
+
+    @FXML
+    protected void onMessagePrivateClicked(String item) {
+        if (item == null) {
+            return; // Rien n’est sélectionné, on ne fait rien.
+        }
+
+        try {
+            // Chargement de la vue mp-view.fxml
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/discordlike_client/mp-view.fxml"));
+            Parent root = fxmlLoader.load();
+
+            // Récupération du contrôleur associé
+            PrivateMessagesController pmController = fxmlLoader.getController();
+            // On passe le pseudo de l'ami à ce contrôleur
+            pmController.setFriendName(item);
+
+            // Affichage dans la même fenêtre
+            Stage stage = (Stage) rootPane.getScene().getWindow();
+            // 1) Mémoriser l'état avant de changer la scène
+                        boolean wasMaximized = stage.isMaximized();
+                        double oldWidth = stage.getWidth();
+                        double oldHeight = stage.getHeight();
+
+            // 2) Charger votre nouveau root FXML
+                        stage.setScene(new Scene(root));
+
+            // 3) Restaurer l'état (maximisé) ou la taille
+                        stage.setMaximized(wasMaximized);
+
+            stage.setWidth(oldWidth);
+            stage.setHeight(oldHeight);
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void showAlert(String title, String message) {
