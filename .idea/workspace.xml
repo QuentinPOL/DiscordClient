@@ -4,12 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="06a46db0-871b-4c48-8e5d-d01525498b03" name="Changes" comment="Big update de tout ENCORE UNE FOISSS">
+    <list default="true" id="06a46db0-871b-4c48-8e5d-d01525498b03" name="Changes" comment="Avancement des serveurs">
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_30_01_2025_13_38_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_30_01_2025_13_38__Changes_.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/discordlike_client/controller/HelloController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/discordlike_client/controller/HelloController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/discordlike_client/HelloApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/discordlike_client/HelloApplication.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/discordlike_client/controller/MainViewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/discordlike_client/controller/MainViewController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/example/discordlike_client/hello-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/example/discordlike_client/hello-view.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/example/discordlike_client/main-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/example/discordlike_client/main-view.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/discordlike_client/controller/PrivateMessagesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/discordlike_client/controller/PrivateMessagesController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/discordlike_client/controller/ServersController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/discordlike_client/controller/ServersController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,25 +64,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.HelloApplication.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Quent/Documents/DiscordClient",
-    "list.type.of.created.stylesheet": "CSS",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.HelloApplication.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Quent/Documents/UniLaSallee/I3-FISA-RIOC/POO Java/TP TD PROJETS/DiscordClient/src/main/resources/com/example/discordlike_client&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\com\example\discordlike_client" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources" />
     </key>
@@ -104,6 +111,8 @@
       <workItem from="1738516606455" duration="4044000" />
       <workItem from="1738673178011" duration="24100000" />
       <workItem from="1738768856252" duration="7184000" />
+      <workItem from="1738923334386" duration="20452000" />
+      <workItem from="1739296558287" duration="3232000" />
     </task>
     <task id="LOCAL-00001" summary="Big update de tout (YOUHOUU)">
       <option name="closed" value="true" />
@@ -121,7 +130,23 @@
       <option name="project" value="LOCAL" />
       <updated>1738697286847</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Avancement des Messages privés">
+      <option name="closed" value="true" />
+      <created>1738924394065</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1738924394065</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Avancement des serveurs">
+      <option name="closed" value="true" />
+      <created>1738954513957</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1738954513957</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -141,7 +166,9 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Big update de tout (YOUHOUU)" />
     <MESSAGE value="Big update de tout ENCORE UNE FOISSS" />
-    <option name="LAST_COMMIT_MESSAGE" value="Big update de tout ENCORE UNE FOISSS" />
+    <MESSAGE value="Avancement des Messages privés" />
+    <MESSAGE value="Avancement des serveurs" />
+    <option name="LAST_COMMIT_MESSAGE" value="Avancement des serveurs" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

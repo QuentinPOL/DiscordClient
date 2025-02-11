@@ -10,6 +10,7 @@ module com.example.discordlike_client {
     requires org.json;
     requires okhttp3;
     requires com.google.gson;
+    requires Java.WebSocket;
 
     opens com.example.discordlike_client to javafx.fxml;
     exports com.example.discordlike_client;

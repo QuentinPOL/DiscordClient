@@ -1,8 +1,10 @@
 package com.example.discordlike_client;
 
+import com.example.discordlike_client.websocket.GlobalWebSocketClient;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -11,6 +13,9 @@ import java.io.IOException;
 public class HelloApplication extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
+        // Connexion WebSocket
+        GlobalWebSocketClient.getInstance().connect("ws://192.168.1.139:8887/websocket");
+
         // Charger le fichier FXML
         Parent root = FXMLLoader.load(getClass().getResource("hello-view.fxml"));
 
@@ -26,5 +31,11 @@ public class HelloApplication extends Application {
 
     public static void main(String[] args) {
         launch();
+    }
+
+    @Override
+    public void stop() {
+        GlobalWebSocketClient.getInstance().close();
+        System.out.println("Application stopped");
     }
 }

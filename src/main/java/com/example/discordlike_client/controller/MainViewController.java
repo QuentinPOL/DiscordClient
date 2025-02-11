@@ -4,6 +4,7 @@ import com.example.discordlike_client.model.ServerItem;
 import com.example.discordlike_client.model.Utilisateur;
 import com.example.discordlike_client.model.Friend;
 import com.example.discordlike_client.model.FriendStatus;
+import com.example.discordlike_client.websocket.GlobalWebSocketClient;
 import com.google.gson.Gson;  // Assurez-vous d'ajouter Gson à vos dépendances
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -25,7 +26,7 @@ import okhttp3.*;
 
 import java.io.IOException;
 
-public class MainViewController {
+public class MainViewController implements GlobalWebSocketClient.MessageListener {
 
     @FXML private HBox rootPane;
     @FXML private Label usernameLabel;
@@ -81,12 +82,18 @@ public class MainViewController {
 
     @FXML
     public void initialize() {
+        // S'abonner aux messages WebSocket
+        GlobalWebSocketClient.getInstance().addMessageListener(this);
+
         // Forcer la fenêtre en mode maximisé et redimensionnable
         Platform.runLater(() -> {
             Stage stage = (Stage) rootPane.getScene().getWindow();
             stage.setMaximized(true);
             stage.setResizable(true);
         });
+
+        String message = "CHAT_MESSAGE: MainView !";
+        GlobalWebSocketClient.getInstance().sendGlobalMessage(message);
 
         // Récupérer les infos de l'utilisateur
         Utilisateur utilisateur = Utilisateur.getInstance();
@@ -859,6 +866,9 @@ public class MainViewController {
         try {
             sendRequest(1, "OFFLINE");
 
+            // Se désabonner pour éviter les fuites de mémoire
+            GlobalWebSocketClient.getInstance().removeMessageListener(this);
+
             Utilisateur.reset();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/discordlike_client/hello-view.fxml"));
             Parent root = loader.load();
@@ -1005,6 +1015,15 @@ public class MainViewController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onMessageReceived(String message) {
+        Platform.runLater(() -> {
+            System.out.println("Message reçu dans MainViewController : " + message);
+            // Mettez à jour l'interface selon le message reçu
+            showAlert("Message WebSocket", message);
+        });
     }
 
     private void showAlert(String title, String message) {

@@ -2,6 +2,7 @@ package com.example.discordlike_client.controller;
 
 import com.example.discordlike_client.model.ServerItem;
 import com.example.discordlike_client.model.Utilisateur;
+import com.example.discordlike_client.websocket.GlobalWebSocketClient;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,7 +23,7 @@ import okhttp3.*;
 
 import java.io.IOException;
 
-public class ServersController {
+public class ServersController implements GlobalWebSocketClient.MessageListener {
 
     private ServerItem serverItem;
 
@@ -57,6 +58,8 @@ public class ServersController {
 
     @FXML
     public void initialize() {
+        GlobalWebSocketClient.getInstance().addMessageListener(this);
+
         // Forcer la fenêtre en mode maximisé et redimensionnable
         Platform.runLater(() -> {
             Stage stage = (Stage) rootPane.getScene().getWindow();
@@ -258,13 +261,10 @@ public class ServersController {
     private void handleSendMessage() {
         String message = messageInputField.getText().trim();
         if (!message.isEmpty()) {
-            // 1) Afficher localement le message (ajouter dans messagesContainer)
-            messagesContainer.getChildren().add(buildMessageBubble("Moi", message, "me"));
+            GlobalWebSocketClient.getInstance().sendGlobalMessage("CHAT_MESSAGE:" + message);
 
-            // 2) (Facultatif) Envoyer le message vers l’API
-            //   sendMessageToAPI(friendNameLabel.getText(), message);
-
-            // 3) Vider le champ et scroller en bas
+            // Ajout du message dans l’interface utilisateur locale
+            addMessage("Moi", "maintenant", message, "/Image/pp.jpg");
             messageInputField.clear();
             Platform.runLater(() -> scrollPane.setVvalue(1.0));
         }
@@ -383,6 +383,8 @@ public class ServersController {
         try {
             sendRequest(1, "OFFLINE");
 
+            GlobalWebSocketClient.getInstance().removeMessageListener(this);
+
             Utilisateur.reset();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/discordlike_client/hello-view.fxml"));
             Parent root = loader.load();
@@ -418,6 +420,15 @@ public class ServersController {
         } catch (IOException e) {
             showAlert("Erreur", "Erreur lors du clique sur la liste d'amis");
         }
+    }
+
+    @Override
+    public void onMessageReceived(String message) {
+        Platform.runLater(() -> {
+            System.out.println("Message reçu dans ServerController : " + message);
+            // Mettez à jour la conversation ici
+            showAlert("Message WebSocket", message);
+        });
     }
 
     private void showAlert(String title, String message) {
