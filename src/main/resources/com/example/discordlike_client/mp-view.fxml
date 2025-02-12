@@ -236,11 +236,9 @@
             <HBox spacing="10" style="-fx-alignment: CENTER_LEFT;">
                 <ImageView fx:id="friendAvatar" fitWidth="60" fitHeight="60"/>
                 <VBox spacing="2">
-                    <Label fx:id="friendPseudo" text="b-KOS"
+                    <Label fx:id="friendPseudo" text="Pseudo-test"
                            style="-fx-text-fill: white; -fx-font-size: 18px;
                                   -fx-font-weight: bold;"/>
-                    <Label fx:id="friendTag" text="french_trapper"
-                           style="-fx-text-fill: #B9BBBE; -fx-font-size: 12px;"/>
                 </VBox>
             </HBox>
 
@@ -248,16 +246,16 @@
             <Label text="À propos de moi"
                    style="-fx-text-fill: white; -fx-font-size: 14px;
                           -fx-font-weight: bold;"/>
-            <Label fx:id="friendAboutMe" text="Look at the moon ! What a big hole !"
+            <Label fx:id="friendAboutMe" text="Description ..."
                    wrapText="true"
                    style="-fx-text-fill: #B9BBBE; -fx-font-size: 12px;"/>
 
             <!-- Date d'inscription, serveurs en commun, amis en commun... -->
-            <Label fx:id="friendDateJoined" text="Membre depuis 27 sept. 2017"
+            <Label fx:id="friendDateJoined" text="Membre depuis (en test)"
                    style="-fx-text-fill: #B9BBBE; -fx-font-size: 12px;"/>
             <Label fx:id="commonServersLabel" text="Serveurs en commun — 1"
                    style="-fx-text-fill: #B9BBBE; -fx-font-size: 12px;"/>
-            <Label fx:id="commonFriendsLabel" text="Amis en commun — 5"
+            <Label fx:id="commonFriendsLabel" text="Amis en commun — (en test)"
                    style="-fx-text-fill: #B9BBBE; -fx-font-size: 12px;"/>
 
             <Pane VBox.vgrow="ALWAYS"/>

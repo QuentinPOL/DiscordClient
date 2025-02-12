@@ -29,7 +29,6 @@
             <!-- Conteneur des boutons de connexion alignés horizontalement -->
             <HBox spacing="10">
                 <Button fx:id="loginButton" text="Connexion" onAction="#onLoginButtonClick" style="-fx-background-color: #5865F2; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10; -fx-pref-width: 200; -fx-background-radius: 5;"/>
-                <Button fx:id="connectGuestButton" text="Connexion Invité" onAction="#onGuestLoginClick" style="-fx-background-color: #5865F2; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10; -fx-pref-width: 200; -fx-background-radius: 5;"/>
             </HBox>
 
             <!-- Lien pour s'inscrire -->

@@ -31,7 +31,7 @@ public class MainViewController implements GlobalWebSocketClient.MessageListener
     @FXML private HBox rootPane;
     @FXML private Label usernameLabel;
     @FXML private ListView<Friend> friendsList;
-    @FXML private ListView<String> privateMessagesList;
+    @FXML private ListView<Friend> privateMessagesList;
     @FXML private ListView<ServerItem> serversListView;
 
     @FXML private StackPane discordLogoContainer;
@@ -63,7 +63,7 @@ public class MainViewController implements GlobalWebSocketClient.MessageListener
     private final OkHttpClient client = new OkHttpClient();
 
     // Classe interne pour le mapping JSON de l'API
-    private static class FriendApiResponse {
+    static class FriendApiResponse {
         String friendUsername;
         int friendshipId;
         String friendshipStatus;
@@ -80,6 +80,32 @@ public class MainViewController implements GlobalWebSocketClient.MessageListener
         String timestamp;
     }
 
+    // Classe interne pour le mapping de la mise à jour de statut d'ami
+    private static class FriendStatusUpdate {
+        String friendUsername;
+        String friendOnlineStatus;
+        String avatar;
+    }
+
+    // Méthode pour convertir une chaîne de status en FriendStatus
+    private FriendStatus mapStatus(String status) {
+        switch (status) {
+            case "ONLINE":
+                return FriendStatus.ONLINE;
+            case "OFFLINE":
+                return FriendStatus.OFFLINE;
+            case "BLOCKED":
+                return FriendStatus.BLOCKED;
+            case "DO_NOT_DISTURB":
+                return FriendStatus.DND;
+            case "IDLE":
+                return FriendStatus.BUSY;
+            default:
+                return FriendStatus.OFFLINE;
+        }
+    }
+
+
     @FXML
     public void initialize() {
         // S'abonner aux messages WebSocket
@@ -92,16 +118,12 @@ public class MainViewController implements GlobalWebSocketClient.MessageListener
             stage.setResizable(true);
         });
 
-        String message = "CHAT_MESSAGE: MainView !";
-        GlobalWebSocketClient.getInstance().sendGlobalMessage(message);
-
         // Récupérer les infos de l'utilisateur
         Utilisateur utilisateur = Utilisateur.getInstance();
         usernameLabel.setText(utilisateur.getPseudo());
 
         // Charger et afficher l'avatar utilisateur
-        String imagePath = getClass().getResource("/Image/pp.jpg").toExternalForm();
-        userAvatar.setImage(new Image(imagePath));
+        userAvatar.setImage(new Image(utilisateur.getImagePath(), true));
         applyCircularClip(userAvatar);
 
         // Mettre à jour le statut utilisateur (pastille et texte)
@@ -114,7 +136,7 @@ public class MainViewController implements GlobalWebSocketClient.MessageListener
         });
 
         // Configuration de la ListView des messages privés
-        privateMessagesList.getItems().addAll("alexpel", "b-KOS", "cloudbray", "Joris HURTEL");
+        privateMessagesList.setItems(acceptedFriends);
         privateMessagesCellFactory();
 
         // Liste de serveurs (icônes)
@@ -196,41 +218,38 @@ public class MainViewController implements GlobalWebSocketClient.MessageListener
             private final Label statusLabel = new Label();
 
             {
-                // Configuration initiale (appelée 1 seule fois par cellule)
-
-                // 1) Avatar
+                // 1) Configuration de l'avatar
                 avatar.setFitWidth(40);
                 avatar.setFitHeight(40);
                 Circle clip = new Circle(20, 20, 20);
                 avatar.setClip(clip);
 
-                // 2) Pastille de statut
+                // 2) Configuration de la pastille de statut
                 friendStatusIndicator.setStroke(Color.WHITE);
                 friendStatusIndicator.setStrokeWidth(2);
                 StackPane.setAlignment(friendStatusIndicator, Pos.BOTTOM_RIGHT);
                 avatarPane.getChildren().addAll(avatar, friendStatusIndicator);
 
-                // 3) Labels
+                // 3) Configuration des labels
                 pseudoLabel.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");
                 statusLabel.setStyle("-fx-text-fill: #B9BBBE; -fx-font-size: 12px;");
                 friendInfo.getChildren().addAll(pseudoLabel, statusLabel);
 
-                // 4) Conteneur principal
+                // 4) Assemblage du conteneur principal
                 container.setAlignment(Pos.CENTER_LEFT);
                 container.setStyle("-fx-background-color: transparent; "
                         + "-fx-border-color: #40444B; "
                         + "-fx-border-width: 0 0 1 0; "
                         + "-fx-padding: 5 10 5 10;");
+                container.getChildren().addAll(avatarPane, friendInfo);
 
-                // 5) Survol (hover) sur la cellule
+                // 5) Gestion de l'effet hover sur la cellule
                 this.setOnMouseEntered(e -> {
-                    // On ne colore que si la cellule n’est pas vide
                     if (getItem() != null) {
-                        setStyle("-fx-background-color: #40444B;");
+                        setStyle("-fx-background-color: #40444B; -fx-cursor: hand;");
                     }
                 });
                 this.setOnMouseExited(e -> {
-                    // On ne restaure le style que si la cellule n’est pas vide
                     if (getItem() != null) {
                         setStyle("-fx-background-color: transparent;");
                     }
@@ -240,28 +259,19 @@ public class MainViewController implements GlobalWebSocketClient.MessageListener
             @Override
             protected void updateItem(Friend friend, boolean empty) {
                 super.updateItem(friend, empty);
-
                 if (empty || friend == null) {
-                    // (A) Cellule vide ou « placeholder »
                     setGraphic(null);
                     setText(null);
-                    // Supprimer tout style éventuel :
                     setStyle("");
-                    // Vider le contenu (évite qu’un ancien contenu traîne dans une cellule réutilisée)
                     container.getChildren().clear();
                 } else {
-                    // (B) Cellule avec un Friend réel
-                    container.getChildren().clear();  // On repart sur du « propre »
+                    container.getChildren().clear();
 
-                    // 1) Avatar
-                    Image img = new Image(getClass().getResource(friend.getAvatarPath()).toExternalForm());
+                    // 1) Avatar et labels
+                    Image img = new Image(friend.getAvatarPath(), true);
                     avatar.setImage(img);
-
-                    // 2) Pseudo
                     pseudoLabel.setText(friend.getPseudo());
-
-                    // 3) Statut en ligne
-                    switch(friend.getOnlineStatus()) {
+                    switch (friend.getOnlineStatus()) {
                         case ONLINE:
                             friendStatusIndicator.setFill(Color.web("#43B581"));
                             statusLabel.setText("En ligne");
@@ -287,17 +297,19 @@ public class MainViewController implements GlobalWebSocketClient.MessageListener
                             statusLabel.setText("Hors ligne");
                             break;
                     }
-
-                    // 4) Statut PENDING ?
-                    if (friend.getFriendshipStatus() == FriendStatus.PENDING) {
-                        statusLabel.setText("En attente");
-                    }
-
-                    // 5) Assembler l’affichage de base
                     container.getChildren().addAll(avatarPane, friendInfo);
 
-                    // 6) Demande en attente ? Boutons Accepter/Refuser/Annuler
-                    if (friend.getFriendshipStatus() == FriendStatus.PENDING) {
+                    // 2) Si l'ami n'est pas en attente, ajouter un bouton pour ouvrir la conversation
+                    if (friend.getFriendshipStatus() != FriendStatus.PENDING) {
+                        Button openButton = new Button("Ouvrir");
+                        openButton.setOnAction(e -> onMessagePrivateClicked(friend));
+                        openButton.setStyle("-fx-background-color: #5865F2; -fx-text-fill: white; -fx-cursor: hand;");
+                        // Utilisation d'un spacer pour pousser le bouton à droite
+                        Pane spacer = new Pane();
+                        HBox.setHgrow(spacer, Priority.ALWAYS);
+                        container.getChildren().addAll(spacer, openButton);
+                    } else {
+                        // Si c'est une demande en attente, vous conservez l'affichage existant (acceptation/refus)
                         HBox actionsContainer = new HBox(5);
                         Pane spacer = new Pane();
                         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -316,13 +328,13 @@ public class MainViewController implements GlobalWebSocketClient.MessageListener
                         container.getChildren().add(actionsContainer);
                     }
 
-                    // 7) Appliquer le conteneur à la cellule
                     setGraphic(container);
                     setText(null);
-
-                    // 8) (Ré)initialiser le style normal (pour le survol)
                     setStyle("-fx-background-color: transparent;");
                 }
+
+                // Au clic, on appelle la méthode qui ouvrira la conversation privée
+                container.setOnMouseClicked(e -> onMessagePrivateClicked(friend));
             }
         });
 
@@ -430,6 +442,10 @@ public class MainViewController implements GlobalWebSocketClient.MessageListener
             // Envoyer la demande d'ami vers le serveur
             sendFriendRequest(pseudo);
         }
+        else {
+            showAlert("Erreur", "Veuillez saisir quelquechose !");
+        }
+
         // Réinitialiser et masquer le formulaire
         friendNameField.clear();
         addFriendContainer.setVisible(false);
@@ -497,7 +513,7 @@ public class MainViewController implements GlobalWebSocketClient.MessageListener
                         }
 
                         // On crée un objet Friend à partir des informations reçues
-                        Friend newFriend = new Friend(friendResponse.friendUsername, "/Image/pp.jpg", FriendStatus.PENDING, onlineStatus, friendResponse.friendshipId, false);
+                        Friend newFriend = new Friend(friendResponse.friendUsername, friendResponse.avatar, FriendStatus.PENDING, onlineStatus, friendResponse.friendshipId, false);
 
                         Platform.runLater(() -> {
                             // Ajout de l'ami à la liste pending et mise à jour de l'affichage
@@ -554,7 +570,7 @@ public class MainViewController implements GlobalWebSocketClient.MessageListener
                                 // Ajouter à acceptedFriends avec les bonnes données
                                 acceptedFriends.add(new Friend(
                                         friend.getPseudo(), // Nom d'utilisateur
-                                        "/Image/pp.jpg", // Image de profil
+                                        friend.getAvatarPath(), // Image de profil
                                         FriendStatus.OFFLINE, // Statut
                                         friend.getOnlineStatus()
                                 ));
@@ -691,7 +707,7 @@ public class MainViewController implements GlobalWebSocketClient.MessageListener
                                         break;
                                 }
 
-                                acceptedFriends.add(new Friend(fr.friendUsername, "/Image/pp.jpg", FriendStatus.OFFLINE, status));
+                                acceptedFriends.add(new Friend(fr.friendUsername, fr.avatar, FriendStatus.OFFLINE, status));
                             }
 
                             // Réappliquer le filtre si nécessaire
@@ -759,7 +775,7 @@ public class MainViewController implements GlobalWebSocketClient.MessageListener
                                 boolean requestReceived = "RECEIVED".equals(fr.requestType);
 
                                 // Création de l'objet Friend
-                                Friend newFriend = new Friend(fr.friendUsername, "/Image/pp.jpg", FriendStatus.PENDING, onlineStatus, fr.friendshipId, requestReceived);
+                                Friend newFriend = new Friend(fr.friendUsername, fr.avatar, FriendStatus.PENDING, onlineStatus, fr.friendshipId, requestReceived);
 
                                 // Assurez-vous que setIDFriendship prend un paramètre et modifie l'objet correctement
                                 newFriend.setIDFriendship(fr.friendshipId);
@@ -781,18 +797,16 @@ public class MainViewController implements GlobalWebSocketClient.MessageListener
 
     // Cell factory pour la ListView des messages privés
     private void privateMessagesCellFactory() {
-        privateMessagesList.setCellFactory(list -> new ListCell<String>() {
-            // Déclaration des composants pour la cellule
+        privateMessagesList.setCellFactory(list -> new ListCell<Friend>() {
             private HBox container = new HBox(10);
             private StackPane avatarStack = new StackPane();
             private ImageView avatar = new ImageView();
             private Circle statusIndicator = new Circle(6);
             private VBox textContainer = new VBox(2);
             private Label pseudoLabel = new Label();
-            private Label statusLabel = new Label();
 
             {
-                // Configuration de l'avatar : taille et clip circulaire
+                // Configuration de l’avatar et son clip circulaire
                 avatar.setFitWidth(40);
                 avatar.setFitHeight(40);
                 Circle clip = new Circle(20, 20, 20);
@@ -801,46 +815,70 @@ public class MainViewController implements GlobalWebSocketClient.MessageListener
                 // Configuration de l'indicateur de statut (pastille)
                 statusIndicator.setStroke(Color.WHITE);
                 statusIndicator.setStrokeWidth(2);
-                statusIndicator.setFill(Color.web("#43B581"));
-
-                // On superpose l'indicateur sur l'avatar
-                avatarStack.getChildren().addAll(avatar, statusIndicator);
                 StackPane.setAlignment(statusIndicator, Pos.BOTTOM_RIGHT);
+                avatarStack.getChildren().addAll(avatar, statusIndicator);
 
-                // Configuration des labels (pseudo et libellé du statut)
+                // Configuration des labels
                 pseudoLabel.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");
-                statusLabel.setStyle("-fx-text-fill: #B9BBBE; -fx-font-size: 12px;");
-                textContainer.getChildren().addAll(pseudoLabel, statusLabel);
+                textContainer.getChildren().addAll(pseudoLabel);
 
+                // Configuration du conteneur principal
                 container.setAlignment(Pos.CENTER_LEFT);
                 container.getChildren().addAll(avatarStack, textContainer);
+
+                // Effet hover
+                this.setOnMouseEntered(e -> {
+                    if (!isEmpty()) {
+                        setStyle("-fx-background-color: #40444B; -fx-cursor: hand;");
+                    }
+                });
+                this.setOnMouseExited(e -> {
+                    if (!isEmpty()) {
+                        setStyle("-fx-background-color: transparent;");
+                    }
+                });
             }
 
             @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
+            protected void updateItem(Friend friend, boolean empty) {
+                super.updateItem(friend, empty);
+                if (empty || friend == null) {
                     setGraphic(null);
+                    setStyle("-fx-background-color: transparent;");
+                    setText(null);
                 } else {
-                    pseudoLabel.setText(item);
-                    statusLabel.setText("En ligne");
-                    statusIndicator.setFill(Color.web("#43B581"));  // Par exemple : vert pour "en ligne"
+                    // Affichage du pseudo
+                    pseudoLabel.setText(friend.getPseudo());
 
-                    // Charger l'image de l'avatar (à remplacer par le chemin dynamique de l’avatar de l’ami)
-                    avatar.setImage(new Image(getClass().getResource("/Image/pp.jpg").toExternalForm()));
+                    // Chargement de l’avatar depuis le chemin dynamique
+                    avatar.setImage(new Image(friend.getAvatarPath(), true));
 
-                    this.setOnMouseEntered(e -> {
-                        setStyle("-fx-background-color: #40444B;");
-                    });
-                    this.setOnMouseExited(e -> {
-                        // Couleur de fond quand la cellule n'est pas sélectionnée
-                        setStyle("-fx-background-color: transparent;");
-                    });
+                    // Configuration de l’indicateur selon le statut de l’ami
+                    switch (friend.getOnlineStatus()) {
+                        case ONLINE:
+                            statusIndicator.setFill(Color.web("#43B581"));
+                            break;
+                        case OFFLINE:
+                            statusIndicator.setFill(Color.web("#747F8D"));
+                            break;
+                        case BLOCKED:
+                            statusIndicator.setFill(Color.web("#F04747"));
+                            break;
+                        case DND:
+                            statusIndicator.setFill(Color.web("#F04747"));
+                            break;
+                        case BUSY:
+                            statusIndicator.setFill(Color.web("#FAA61A"));
+                            break;
+                        default:
+                            statusIndicator.setFill(Color.web("#747F8D"));
+                            break;
+                    }
 
                     setGraphic(container);
 
-                    // Gestion du clic sur la cellule : ouverture de la conversation
-                    container.setOnMouseClicked(e -> onMessagePrivateClicked(item));
+                    // Au clic, on appelle la méthode qui ouvrira la conversation privée
+                    container.setOnMouseClicked(e -> onMessagePrivateClicked(friend));
                 }
             }
         });
@@ -868,6 +906,7 @@ public class MainViewController implements GlobalWebSocketClient.MessageListener
 
             // Se désabonner pour éviter les fuites de mémoire
             GlobalWebSocketClient.getInstance().removeMessageListener(this);
+            GlobalWebSocketClient.getInstance().close();
 
             Utilisateur.reset();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/discordlike_client/hello-view.fxml"));
@@ -980,10 +1019,8 @@ public class MainViewController implements GlobalWebSocketClient.MessageListener
     }
 
     @FXML
-    protected void onMessagePrivateClicked(String item) {
-        if (item == null) {
-            return; // Rien n’est sélectionné, on ne fait rien.
-        }
+    protected void onMessagePrivateClicked(Friend friend) {
+        if (friend == null) return;
 
         try {
             // Chargement de la vue mp-view.fxml
@@ -992,8 +1029,7 @@ public class MainViewController implements GlobalWebSocketClient.MessageListener
 
             // Récupération du contrôleur associé
             PrivateMessagesController pmController = fxmlLoader.getController();
-            // On passe le pseudo de l'ami à ce contrôleur
-            pmController.setFriendName(item);
+            pmController.setFriendName(friend.getPseudo());
 
             // Affichage dans la même fenêtre
             Stage stage = (Stage) rootPane.getScene().getWindow();
@@ -1020,9 +1056,28 @@ public class MainViewController implements GlobalWebSocketClient.MessageListener
     @Override
     public void onMessageReceived(String message) {
         Platform.runLater(() -> {
-            System.out.println("Message reçu dans MainViewController : " + message);
-            // Mettez à jour l'interface selon le message reçu
-            showAlert("Message WebSocket", message);
+            try {
+                // Tente de parser le message comme une mise à jour de statut d'ami
+                FriendStatusUpdate update = new Gson().fromJson(message, FriendStatusUpdate.class);
+                if (update.friendUsername != null && update.friendOnlineStatus != null) {
+                    // Mise à jour de l'ami dans acceptedFriends
+                    for (Friend f : acceptedFriends) {
+                        if (f.getPseudo().equalsIgnoreCase(update.friendUsername)) {
+                            f.setOnlineStatus(mapStatus(update.friendOnlineStatus));
+                            break;
+                        }
+                    }
+                    // Si vous utilisez également une liste filtrée, n'oubliez pas de la rafraîchir
+                    friendsList.refresh();
+                    privateMessagesList.refresh();
+                } else {
+                    // Si ce n'est pas un message de mise à jour de statut, gérer autrement (ou ignorer)
+                    System.out.println("Message reçu : " + message);
+                }
+            } catch (Exception e) {
+                // Si le message n'est pas de type FriendStatusUpdate, vous pouvez le traiter autrement
+                System.out.println("Message reçu (non statut) : " + message);
+            }
         });
     }
 

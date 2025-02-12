@@ -1,6 +1,7 @@
 package com.example.discordlike_client.controller;
 
 import com.example.discordlike_client.model.Utilisateur;
+import com.example.discordlike_client.websocket.GlobalWebSocketClient;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -124,6 +125,9 @@ public class Inscription {
                             JSONObject jsonResponse = new JSONObject(responseBody);
                             String token = jsonResponse.getString("token");
                             String avatar = jsonResponse.getString("avatar");
+
+                            // Connexion WebSocket
+                            GlobalWebSocketClient.getInstance().connect("ws://163.172.34.212:8090?token=" + token);
 
                             utilisateur.setToken(token);
                             utilisateur.setImagePath(avatar);

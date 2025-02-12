@@ -92,57 +92,9 @@
         <!-- Barre de séparation noire -->
         <Separator/>
 
-        <!-- Conteneur principal : catégories + salons -->
-        <VBox spacing="12" style="-fx-padding: 8;">
-
-            <!-- Catégorie : SALONS TEXTUELS -->
-            <HBox spacing="3" alignment="CENTER_LEFT" style="-fx-padding: 0;">
-                <Label text="SALONS TEXTUELS" style="-fx-text-fill: #8E9297; -fx-font-size: 12px; -fx-font-weight: bold;"/>
-                <Pane HBox.hgrow="ALWAYS" />
-                <!-- Bouton + pour créer un nouveau salon textuel -->
-                <Label text="+" style="-fx-text-fill: #8E9297; -fx-cursor: hand; -fx-font-size: 16px; -fx-font-weight: bold;" />
-            </HBox>
-
-            <!-- Un salon textuel (ex: # général) -->
-            <HBox spacing="5" alignment="CENTER_LEFT" style="-fx-cursor: hand;">
-                <ImageView fitWidth="18" fitHeight="18">
-                    <image>
-                        <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\chanel-texte.png" />
-                    </image>
-                </ImageView>
-                <Label text="général" style="-fx-text-fill: #FFFFFF; -fx-font-size: 16px;" />
-            </HBox>
-
-            <!-- Un autre salon textuel (ex: # test) -->
-            <HBox spacing="5" alignment="CENTER_LEFT" style="-fx-cursor: hand; -fx-padding: 2 0;">
-                <ImageView fitWidth="18" fitHeight="18">
-                    <image>
-                        <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\chanel-texte.png" />
-                    </image>
-                </ImageView>
-                <Label text="test" style="-fx-text-fill: #FFFFFF; -fx-font-size: 16px;" />
-            </HBox>
-
-            <!-- Catégorie SALONS VOCAUX -->
-            <HBox spacing="5" alignment="CENTER_LEFT">
-                <Label text="SALONS VOCAUX"
-                       style="-fx-text-fill: #8E9297; -fx-font-size: 12px; -fx-font-weight: bold;" />
-                <Pane HBox.hgrow="ALWAYS" />
-                <Label text="+"
-                       style="-fx-text-fill: #8E9297; -fx-cursor: hand; -fx-font-size: 16px; -fx-font-weight: bold;" />
-            </HBox>
-
-            <!-- Un salon vocal (icône haut‐parleur) -->
-            <HBox spacing="5" alignment="CENTER_LEFT" style="-fx-cursor: hand;">
-                <ImageView fitWidth="18" fitHeight="18">
-                    <image>
-                        <!-- Icône de haut‐parleur / micro / etc. -->
-                        <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\channel-vocal.png" />
-                    </image>
-                </ImageView>
-                <Label text="Général" style="-fx-text-fill: #FFFFFF; -fx-font-size: 16px;" />
-            </HBox>
-
+        <!-- Conteneur principal pour les salons de texte (générés dynamiquement) -->
+        <VBox fx:id="channelsContainer" spacing="12" style="-fx-padding: 8;">
+            <!-- Les salons seront ajoutés ici par la méthode loadTextChannels() du contrôleur -->
         </VBox>
 
         <!-- Pousse la barre utilisateur vers le bas -->
@@ -166,7 +118,7 @@
             </VBox>
 
             <!-- Icônes Mute / Casque / Paramètres -->
-            <HBox spacing="12"  style="-fx-padding: 12 8 8 8;">
+            <HBox spacing="12"  style="-fx-padding: 12 8 0 20;">
                 <ImageView fitWidth="17" fitHeight="17">
                     <image>
                         <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\microphone.png"/>
@@ -196,7 +148,7 @@
             <Pane HBox.hgrow="ALWAYS"/>
 
             <!-- Boutons d’actions pour le salon (exemple : inviter, infos) -->
-            <HBox spacing="10">
+            <HBox spacing="10" style="-fx-background-color: #2F3136; -fx-padding: 5 5 5 5;">
                 <ImageView fitWidth="17" fitHeight="17">
                     <image>
                         <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\friends.png"/>
@@ -230,12 +182,18 @@
     </VBox>
 
     <!-- 4) Colonne droite : Liste des membres -->
-    <VBox spacing="0"
-          style="-fx-background-color: #2F3136; -fx-pref-width: 280; -fx-max-width: 280;">
-        <VBox spacing="10" style="-fx-padding: 10;">
-            <Label text="En ligne (1)" style="-fx-text-fill: #8E9297; -fx-font-size: 12px; -fx-font-weight: bold;"/>
-            <Label text="DJquinquin" style="-fx-text-fill: #FFFFFF; -fx-font-size: 14px;"/>
-            <Pane VBox.vgrow="ALWAYS"/>
+    <VBox spacing="10" style="-fx-background-color: #2F3136; -fx-pref-width: 280; -fx-max-width: 280; -fx-padding: 20 10 10 10;">
+        <!-- Titre global de la section (facultatif) -->
+        <Label text="Membres du serveur" style="-fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;" />
+
+        <!-- Section pour les membres en ligne -->
+        <VBox fx:id="onlineUsersContainer" spacing="10" style="-fx-padding: 0 10 10 10;">
+            <!-- Les membres en ligne seront ajoutés dynamiquement ici -->
+        </VBox>
+
+        <!-- Section pour les membres hors ligne -->
+        <VBox fx:id="offlineUsersContainer" spacing="10" style="-fx-padding: 0 10 10 10;">
+            <!-- Les membres hors ligne seront ajoutés dynamiquement ici -->
         </VBox>
     </VBox>
 </HBox>
