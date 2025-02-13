@@ -193,6 +193,7 @@ public class PrivateMessagesController implements GlobalWebSocketClient.MessageL
 
                         stage.setWidth(oldWidth);
                         stage.setHeight(oldHeight);
+                        stage.show();
 
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -646,6 +647,7 @@ public class PrivateMessagesController implements GlobalWebSocketClient.MessageL
 
             stage.setWidth(oldWidth);
             stage.setHeight(oldHeight);
+            stage.show();
         } catch (IOException e) {
             showAlert("Erreur", "Erreur lors du clique sur la liste d'amis");
         }

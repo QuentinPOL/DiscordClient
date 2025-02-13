@@ -24,7 +24,7 @@
 
         <!-- Bloc du haut : logo Discord, une ligne de séparation, et un label -->
         <VBox alignment="CENTER" spacing="6" style="-fx-padding: 10 0 0 0;">
-            <Label text="Discord" style="-fx-text-fill: #8E9297; -fx-font-size: 12px; -fx-font-weight: bold;" />
+            <Label text="Uptempo" style="-fx-text-fill: #8E9297; -fx-font-size: 12px; -fx-font-weight: bold;" />
 
             <!-- Conteneur : on gère la bordure circulaire sur LUI, pas sur l'ImageView -->
             <StackPane fx:id="discordLogoContainer" alignment="CENTER" minWidth="60" minHeight="60" prefWidth="65" prefHeight="65" maxWidth="65" maxHeight="65" style="
@@ -32,7 +32,7 @@
 
                 <ImageView fx:id="discordLogo" fitWidth="40" fitHeight="40">
                     <image>
-                        <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\discord.png"/>
+                        <Image url="C:\Users\Quent\Documents\DiscordClient\src\main\resources\Image\discord.png"/>
                     </image>
                 </ImageView>
             </StackPane>
@@ -80,8 +80,7 @@
             <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: #40444B; -fx-padding: 8; -fx-background-radius: 5;">
                 <ImageView fitWidth="28" fitHeight="28">
                     <image>
-                        <!--<Image url="C:\Users\Quent\Documents\DiscordClient\src\main\resources\Image\friends.png"/>-->
-                        <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\friends.png"/>
+                        <Image url="C:\Users\Quent\Documents\DiscordClient\src\main\resources\Image\friends.png"/>
                     </image>
                 </ImageView>
                 <Label text="Amis" style="-fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;"/>
@@ -91,8 +90,7 @@
             <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 8;">
                 <ImageView fitWidth="28" fitHeight="28">
                     <image>
-                        <!--<Image url="C:\Users\Quent\Documents\DiscordClient\src\main\resources\Image\library.png"/>-->
-                        <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\library.png"/>
+                        <Image url="C:\Users\Quent\Documents\DiscordClient\src\main\resources\Image\library.png"/>
                     </image>
                 </ImageView>
                 <Label text="Bibliothèque" style="-fx-text-fill: #B9BBBE; -fx-font-size: 14px; -fx-font-weight: bold;"/>
@@ -102,8 +100,8 @@
             <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 8;">
                 <ImageView fitWidth="28" fitHeight="28">
                     <image>
-                        <!--<Image url="C:\Users\Quent\Documents\DiscordClient\src\main\resources\Image\nitro.png"/>-->
-                        <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\nitro.png"/>
+                        <Image url="C:\Users\Quent\Documents\DiscordClient\src\main\resources\Image\nitro.png"/>
+                        <!--<Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\nitro.png"/>-->
                     </image>
                 </ImageView>
                 <Label text="Nitro" style="-fx-text-fill: #B9BBBE; -fx-font-size: 14px; -fx-font-weight: bold;"/>
@@ -113,8 +111,7 @@
             <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 8;">
                 <ImageView fitWidth="28" fitHeight="28">
                     <image>
-                        <!--<Image url="C:\Users\Quent\Documents\DiscordClient\src\main\resources\Image\shop.png"/>-->
-                        <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\shop.png"/>
+                        <Image url="C:\Users\Quent\Documents\DiscordClient\src\main\resources\Image\shop.png"/>
                     </image>
                 </ImageView>
                 <Label text="Boutique" style="-fx-text-fill: #B9BBBE; -fx-font-size: 14px; -fx-font-weight: bold;"/>
@@ -161,20 +158,17 @@
             <HBox spacing="8" alignment="CENTER">
                 <ImageView fitWidth="17" fitHeight="17">
                     <image>
-                        <!--<Image url="C:\Users\Quent\Documents\DiscordClient\src\main\resources\Image\microphone.png"/>-->
-                        <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\microphone.png"/>
+                        <Image url="C:\Users\Quent\Documents\DiscordClient\src\main\resources\Image\microphone.png"/>
                     </image>
                 </ImageView>
                 <ImageView fitWidth="17" fitHeight="17">
                     <image>
-                        <!--<Image url="C:\Users\Quent\Documents\DiscordClient\src\main\resources\Image\headset.png"/>-->
-                        <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\headset.png"/>
+                        <Image url="C:\Users\Quent\Documents\DiscordClient\src\main\resources\Image\headset.png"/>
                     </image>
                 </ImageView>
                 <ImageView fitWidth="17" fitHeight="17">
                     <image>
-                        <!--<Image url="C:\Users\Quent\Documents\DiscordClient\src\main\resources\Image\settings.png"/>-->
-                        <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\settings.png"/>
+                        <Image url="C:\Users\Quent\Documents\DiscordClient\src\main\resources\Image\settings.png"/>
                     </image>
                 </ImageView>
             </HBox>

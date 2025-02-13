@@ -118,6 +118,9 @@ public class HelloController {
                                 // Connexion WebSocket
                                 GlobalWebSocketClient.getInstance().connect("ws://163.172.34.212:8090?token=" + token);
 
+                                System.out.println(username);
+                                System.out.println(status);
+
                                 utilisateur.setAdresseMail(email);
                                 utilisateur.setPseudo(username);
                                 utilisateur.setStatutString(status);

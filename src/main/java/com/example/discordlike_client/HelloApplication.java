@@ -20,7 +20,7 @@ public class HelloApplication extends Application {
         Scene scene = new Scene(root);
 
         // Configurer la fenêtre
-        primaryStage.setTitle("Discord Client");
+        primaryStage.setTitle("Uptempo Client");
         primaryStage.setScene(scene);
         primaryStage.setResizable(false); // Permet d'agrandir et réduire la fenêtre
         primaryStage.show();

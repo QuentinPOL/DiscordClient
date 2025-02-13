@@ -41,8 +41,7 @@
             <Label text="Scanne-le avec l'application mobile Discord pour te connecter instantanément."
                    style="-fx-font-size: 12px; -fx-text-fill: #B9BBBE; -fx-wrap-text: true; -fx-max-width: 200;"/>
             <ImageView fitHeight="150" fitWidth="150">
-                <Image url="C:\Users\Quent\Documents\UniLaSallee\I3-FISA-RIOC\POO Java\TP TD PROJETS\DiscordClient\src\main\resources\Image\qrcode.png"/>
-                <!--<Image url="C:\Users\Quent\Documents\DiscordClient\src\main\resources\Image\qrcode.png"/>-->
+                <Image url="C:\Users\Quent\Documents\DiscordClient\src\main\resources\Image\qrcode.png"/>
             </ImageView>
         </VBox>
     </HBox>

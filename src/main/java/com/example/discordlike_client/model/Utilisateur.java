@@ -81,6 +81,9 @@ public class Utilisateur {
         else if (Objects.equals(statut, "INVISIBLE")) {
             this.statut = Status.INVISIBLE;
         }
+        else if (Objects.equals(statut, "OFFLINE")) {
+            this.statut = Status.ONLINE;
+        }
     }
 
     public String getImagePath() {

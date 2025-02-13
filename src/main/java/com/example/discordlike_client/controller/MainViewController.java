@@ -1047,7 +1047,6 @@ public class MainViewController implements GlobalWebSocketClient.MessageListener
             stage.setWidth(oldWidth);
             stage.setHeight(oldHeight);
             stage.show();
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -1060,14 +1059,12 @@ public class MainViewController implements GlobalWebSocketClient.MessageListener
                 // Tente de parser le message comme une mise à jour de statut d'ami
                 FriendStatusUpdate update = new Gson().fromJson(message, FriendStatusUpdate.class);
                 if (update.friendUsername != null && update.friendOnlineStatus != null) {
-                    // Mise à jour de l'ami dans acceptedFriends
-                    for (Friend f : acceptedFriends) {
-                        if (f.getPseudo().equalsIgnoreCase(update.friendUsername)) {
-                            f.setOnlineStatus(mapStatus(update.friendOnlineStatus));
-                            break;
-                        }
-                    }
-                    // Si vous utilisez également une liste filtrée, n'oubliez pas de la rafraîchir
+                    // Mise à jour dans toutes les listes d'amis concernées
+                    updateFriendStatusInList(acceptedFriends, update);
+                    updateFriendStatusInList(pendingFriends, update);
+                    updateFriendStatusInList(filteredFriends, update);
+
+                    // Rafraîchit les ListView pour refléter le changement en temps réel
                     friendsList.refresh();
                     privateMessagesList.refresh();
                 } else {
@@ -1079,6 +1076,14 @@ public class MainViewController implements GlobalWebSocketClient.MessageListener
                 System.out.println("Message reçu (non statut) : " + message);
             }
         });
+    }
+    // Méthode utilitaire pour mettre à jour le status d'un friend dans une liste donnée
+    private void updateFriendStatusInList(ObservableList<Friend> friendList, FriendStatusUpdate update) {
+        for (Friend f : friendList) {
+            if (f.getPseudo().equalsIgnoreCase(update.friendUsername)) {
+                f.setOnlineStatus(mapStatus(update.friendOnlineStatus));
+            }
+        }
     }
 
     private void showAlert(String title, String message) {

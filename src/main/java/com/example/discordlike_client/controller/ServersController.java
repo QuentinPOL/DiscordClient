@@ -218,7 +218,7 @@ public class ServersController implements GlobalWebSocketClient.MessageListener 
 
     private void loadTextChannels() {
         // Exemple de liste de salons de texte (à remplacer par une récupération via API si nécessaire)
-        String[] channels = {"général", "test", "annonces", "discussions"};
+        String[] channels = {"général"};
 
         channelsContainer.getChildren().clear();
 
@@ -657,6 +657,7 @@ public class ServersController implements GlobalWebSocketClient.MessageListener 
 
             stage.setWidth(oldWidth);
             stage.setHeight(oldHeight);
+            stage.show();
         } catch (IOException e) {
             showAlert("Erreur", "Erreur lors du clique sur la liste d'amis");
         }
